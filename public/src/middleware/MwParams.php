@@ -11,13 +11,17 @@ class MwUsuario
 		$params = $request->getParsedBody();
 
 		if (isset($params['usuario']) && isset($params['clave']) && isset($params['rol'])) {
-			if (!empty($params['usuario']) && !empty($params['clave']) && !empty($params['rol'])) {
+			if (
+				!empty($params['usuario'])
+				&& !empty($params['clave'])
+				&& !empty($params['rol'])
+			) {
 				$response = $handler->handle($request);
 			} else {
-				$response->getBody()->write("Revise los datos ingresados!");
+				$response->getBody()->write(json_encode(array("msg" => "Revise los datos ingresados!")));
 			}
 		} else {
-			$response->getBody()->write("Ingrese los datos del usuario!");
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese los datos del usuario!")));
 		}
 
 		return $response;
@@ -32,13 +36,17 @@ class MwProducto
 		$params = $request->getParsedBody();
 
 		if (isset($params['sector']) && isset($params['descripcion']) && isset($params['precio'])) {
-			if (!empty($params['sector']) && !empty($params['descripcion']) && !empty($params['precio'])) {
+			if (
+				!empty($params['sector'])
+				&& !empty($params['descripcion'])
+				&& floatval($params['precio']) > 0
+			) {
 				$response = $handler->handle($request);
 			} else {
-				$response->getBody()->write("Revise los datos ingresados!");
+				$response->getBody()->write(json_encode(array("msg" => "Revise los datos ingresados!")));
 			}
 		} else {
-			$response->getBody()->write("Ingrese los datos del producto!");
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese los datos del producto!")));
 		}
 
 		return $response;
@@ -62,10 +70,10 @@ class MwPedido
 			) {
 				$response = $handler->handle($request);
 			} else {
-				$response->getBody()->write("Revise los datos ingresados!");
+				$response->getBody()->write(json_encode(array("msg" => "Revise los datos ingresados!")));
 			}
 		} else {
-			$response->getBody()->write("Ingrese los datos del pedido!");
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese los datos del pedido!")));
 		}
 
 		return $response;
@@ -83,10 +91,10 @@ class MwMesa
 			if (intval($params['estado']) >= 1 && intval($params['estado']) <= 4) {
 				$response = $handler->handle($request);
 			} else {
-				$response->getBody()->write("Revise el estado de mesa ingresado! (1-4)");
+				$response->getBody()->write(json_encode(array("msg" => "Revise el estado de mesa ingresado! (1-4)")));
 			}
 		} else {
-			$response->getBody()->write("Ingrese el estado de la mesa!");
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el estado de la mesa!")));
 		}
 
 
@@ -94,31 +102,32 @@ class MwMesa
 	}
 }
 
-class MwProductoOrden
+class MwLogin
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
 		$response = new Response();
 		$params = $request->getParsedBody();
 
-		if (isset($params['idPedido']) && isset($params['idProducto']) && isset($params['idMesa']) && isset($params['descripcion']) && isset($params['estado']) && isset($params['cliente']) && isset($params['foto'])) {
-			if (
-				!empty(intval($params['idPedido']))
-				&& !empty(intval($params['idProducto']))
-				&& !empty(intval($params['idMesa']))
-				&& !empty($params['descripcion'])
-				&& !empty(intval($params['estado']))
-				&& !empty($params['cliente'])
-				&& !empty($params['foto'])
-			) {
-				$response = $handler->handle($request);
+		if (isset($params['id']) && isset($params['usuario']) && isset($params['clave'])) {
+			$idUser = $params['id'];
+			$usuario = Usuario::TraerPorId($idUser);
+			if (!empty($usuario)) {
+				if (
+					!strcasecmp($usuario[0]->usuario, $params['usuario'])
+					&& password_verify($params['clave'], $usuario[0]->clave)
+				) {
+					$response = $handler->handle($request);
+				} else {
+					$response->getBody()->write(json_encode(array("msg" => "El usuario y la clave no coinciden!")));
+				}
 			} else {
-				$response->getBody()->write("Revise los datos ingresados!");
+				$response->getBody()->write(json_encode(array("msg" => "No existe un usuario con ese id!")));
 			}
 		} else {
-			$response->getBody()->write("Ingrese los datos del producto ordenado!");
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese los datos para el login!")));
 		}
 
-		return $response;
+		return $response->withHeader('Content-Type', 'application/json');
 	}
 }

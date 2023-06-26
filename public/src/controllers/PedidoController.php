@@ -1,21 +1,25 @@
 <?php
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-include_once __DIR__ . "/../models/Pedido.php";
+include_once __DIR__ . "\..\models\Pedido.php";
+include_once __DIR__ . "\..\models\Archivos.php";
+include_once __DIR__ . "\..\interfaces\IPdo.php";
 
-class PedidoController extends Pedido
+class PedidoController extends Pedido implements IPdo
 {
-	public static function CargarPedido(Request $request, Response $response, array $args)
+	public static function Add(Request $request, Response $response, array $args)
 	{
 		$params = $request->getParsedBody();
 
 		$pedido = new Pedido();
+		$pedido->id = substr(uniqid(), -5);
 		$pedido->idMesa = $params['idMesa'];
 		$pedido->idProducto = $params['idProducto'];
 		$pedido->estado = PEDIDO_PREPARACION;
 		$pedido->cliente = $params['cliente'];
-		Archivo::GuardarImagenDePeticion("public/src/Fotos_Mesas/", $pedido->cliente, 'foto');
-		$pedido->foto = "public/src/Fotos_Mesas/$pedido->cliente.jpg";
+		$pedido->minutos = intval($params['minutos']);
+		Archivo::GuardarImagenDePeticion(__DIR__ . "/../../src/FotosMesas/", $pedido->cliente, 'foto');
+		$pedido->foto = "public/src/FotosMesas/$pedido->cliente.jpg";
 		$pedido->CrearPedido();
 
 		$payload = json_encode(array("msg" => "Pedido creado con exito"));
@@ -24,7 +28,7 @@ class PedidoController extends Pedido
 		return $response->withHeader('Content-Type', 'application/json');
 	}
 
-	public static function TraerPedidos(Request $request, Response $response, array $args)
+	public static function GetAll(Request $request, Response $response, array $args)
 	{
 		$pedidos = Pedido::TraerTodos();
 		
@@ -33,4 +37,36 @@ class PedidoController extends Pedido
 
 		return $response->withHeader('Content-Type', 'application/json');
 	}
+
+	public static function GetOne(Request $request, Response $response, array $args)
+	{
+		$pedido = Pedido::TraerPorId($args['id']);
+
+		$payload = json_encode(array("obj" => $pedido));
+		$response->getBody()->write($payload);
+
+		return $response->withHeader('Content-Type', 'application/json');
+	}
+
+	public static function Delete(Request $request, Response $response, array $args)
+	{
+
+	}
+
+	public static function Modify(Request $request, Response $response, array $args)
+	{
+		$params = $request->getParsedBody();
+		$pedido = Pedido::TraerPorId($params['id']);
+		
+		if (!empty($pedido)) {
+			Pedido::PedidoListo($params['id']);
+			$payload = json_encode(array("msg" => "Pedido #{$params['id']}: LISTO"));
+		} else {
+			$payload = json_encode(array("msg" => "No existe un pedido con ese ID!"));
+		}
+		
+		$response->getBody()->write($payload);
+		return $response->withHeader('Content-Type', 'application\json');
+	}
+
 }

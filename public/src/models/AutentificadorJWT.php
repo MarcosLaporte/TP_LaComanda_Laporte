@@ -15,9 +15,10 @@ class AutentificadorJWT
 			'exp' => $ahora + (60000),
 			'aud' => self::Aud(),
 			'data' => $datos,
-			'app' => "Test JWT"
+			'app' => "Laporte"
 		);
-		return JWT::encode($payload, self::$claveSecreta, self::$tipoEncriptacion);
+		
+		return JWT::encode($payload, self::$claveSecreta, self::$tipoEncriptacion[0]);
 	}
 
 	public static function VerificarToken($token)
@@ -35,7 +36,7 @@ class AutentificadorJWT
 			throw $e;
 		}
 		if ($decodificado->aud !== self::Aud()) {
-			throw new Exception("No es el usuario valido");
+			throw new Exception("No es el usuario valido.");
 		}
 	}
 

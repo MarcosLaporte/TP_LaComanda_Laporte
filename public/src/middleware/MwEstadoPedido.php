@@ -9,16 +9,15 @@ class MwEstadoPedido
 	{
 		$response = new Response();
 		$params = $request->getParsedBody();
-		$estados = [PEDIDO_PREPARACION, PEDIDO_LISTO];
 
 		if (isset($params['estado'])) {
-			if (intval($params['estado']) == 0 || intval($params['estado'] == 1)) {
+			if (intval($params['estado']) == PEDIDO_PREPARACION || intval($params['estado'] == PEDIDO_LISTO)) {
 				$response = $handler->handle($request);
 			} else {
-				$response->getBody()->write("Revise el estado de pedido! (0-1)");
+				$response->getBody()->write(json_encode(array("msg" => "Revise el estado de pedido! (0-1)")));
 			}
 		} else {
-			$response->getBody()->write("Ingrese el estado del pedido!");
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el estado del pedido!")));
 		}
 
 

@@ -1,11 +1,12 @@
 <?php
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-include_once __DIR__ . "/../models/Producto.php";
+include_once __DIR__ . "\..\models\Producto.php";
+include_once __DIR__ . "\..\interfaces\IPdo.php";
 
-class ProductoController extends Producto
+class ProductoController extends Producto implements IPdo
 {
-	public static function CargarProducto(Request $request, Response $response, array $args)
+	public static function Add(Request $request, Response $response, array $args)
 	{
 		$params = $request->getParsedBody();
 
@@ -21,7 +22,7 @@ class ProductoController extends Producto
 		return $response->withHeader('Content-Type', 'application/json');
 	}
 
-	public static function TraerProductos(Request $request, Response $response, array $args)
+	public static function GetAll(Request $request, Response $response, array $args)
 	{
 		$productos = Producto::TraerTodos();
 		
@@ -30,4 +31,20 @@ class ProductoController extends Producto
 
 		return $response->withHeader('Content-Type', 'application/json');
 	}
+
+	public static function GetOne(Request $request, Response $response, array $args)
+	{
+
+	}
+	
+	public static function Delete(Request $request, Response $response, array $args)
+	{
+
+	}
+	
+	public static function Modify(Request $request, Response $response, array $args)
+	{
+
+	}
+	
 }

@@ -14,10 +14,10 @@ class MwSectoresProductos
 			if(intval($params['sector']) >= 1 && intval($params['sector']) <= 4) {
 				$response = $handler->handle($request);
 			} else {
-				$response->getBody()->write("Revise el sector de producto ingresado! (1-4)");
+				$response->getBody()->write(json_encode(array("msg" => "Revise el sector de producto ingresado! (1-4)")));
 			}
 		} else {
-			$response->getBody()->write("Ingrese el sector al que pertenece el producto!");
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el sector al que pertenece el producto!")));
 		}
 
 

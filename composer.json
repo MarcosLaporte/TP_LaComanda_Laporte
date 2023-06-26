@@ -2,6 +2,6 @@
     "require": {
         "slim/slim": "^4.11",
         "slim/psr7": "^1.6",
-        "kreait/firebase-php": "^5.26"
+		"firebase/php-jwt": "^4.0"
     }
 }

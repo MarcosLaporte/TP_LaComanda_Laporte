@@ -36,4 +36,31 @@ class Mesa
 		$req->execute();
 		return $req->fetchAll(PDO::FETCH_CLASS, 'Mesa');
 	}
+
+	public static function ModificarEstado($id, $estado)
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+		$req = $objAccesoDatos->PrepararConsulta("UPDATE mesas SET estado=:estado WHERE id=:id");
+        $req->bindValue(':estado', $estado, PDO::PARAM_INT);
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+		$req->execute();
+
+        return $objAccesoDatos->ObtenerUltimoId();
+	}
+
+	public static function ParseEstado(int $numEstado)
+	{
+		switch ($numEstado) {
+			case MESA_ESPERANDO:
+				return "ESPERANDO";
+			case MESA_COMIENDO:
+				return "COMIENDO";
+			case MESA_PAGANDO:
+				return "PAGANDO";
+			case MESA_CERRADA:
+				return "CERRADA";
+			default:
+				return "N/A";
+		}
+	}
 }

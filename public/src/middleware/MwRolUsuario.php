@@ -15,10 +15,10 @@ class MwRolUsuario
 			if (in_array($params['rol'], $roles, true)) {
 				$response = $handler->handle($request);
 			} else {
-				$response->getBody()->write("Revise el rol ingresado!");
+				$response->getBody()->write(json_encode(array("msg" => "Revise el rol ingresado!")));
 			}
 		} else {
-			$response->getBody()->write("Ingrese el rol del usuario!");
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el rol del usuario!")));
 		}
 
 		return $response;

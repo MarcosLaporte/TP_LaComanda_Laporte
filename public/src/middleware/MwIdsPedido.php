@@ -16,13 +16,13 @@ class MwIdMesaPedido
 				if ($mesa[0]->estado == MESA_ESPERANDO || $mesa[0]->estado == MESA_COMIENDO) {
 					$response = $handler->handle($request);
 				} else {
-					$response->getBody()->write("La mesa no puede estar cerrada ni pagando!");
+					$response->getBody()->write(json_encode(array("msg" => "La mesa no puede estar cerrada ni pagando!")));
 				}
 			} else {
-				$response->getBody()->write("Revise el ID de la mesa!");
+				$response->getBody()->write(json_encode(array("msg" => "Revise el ID de la mesa!")));
 			}
 		} else {
-			$response->getBody()->write("Ingrese el ID de la mesa!");
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID de la mesa!")));
 		}
 
 
@@ -41,10 +41,10 @@ class MwIdProdPedido
 			if (in_array($params['idProducto'], $idProductos)) {
 				$response = $handler->handle($request);
 			} else {
-				$response->getBody()->write("Revise el ID del producto!");
+				$response->getBody()->write(json_encode(array("msg" => "Revise el ID del producto!")));
 			}
 		} else {
-			$response->getBody()->write("Ingrese el ID del producto!");
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID del producto!")));
 		}
 
 

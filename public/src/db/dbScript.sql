@@ -8,7 +8,7 @@ CREATE TABLE usuarios(
     usuario varchar(50) NOT NULL,
     clave varchar(250) NOT NULL,
     rol varchar(13) NOT NULL,
-    CONSTRAINT `ROL_CHECK` CHECK (
+    CONSTRAINT `rol_check` CHECK (
 		rol LIKE 'bartender' OR
 		rol LIKE 'cervecero' OR
 		rol LIKE 'cocinero' OR
@@ -18,9 +18,9 @@ CREATE TABLE usuarios(
 ) AUTO_INCREMENT = 101;
 
 INSERT INTO usuarios(usuario, clave, rol) VALUES
-    ('Max', 'pswj389fr41bv58', 'mozo'),
-    ('John', 'cv20582s82', 'cocinero'),
-    ('Tom', 'wq8we545cs', 'socio');
+    ('Max', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'mozo'),
+    ('John', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'cocinero'),
+    ('Tom', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'socio');
 /*-----------------------------------------------*/
 DROP TABLE IF EXISTS mesas;
 CREATE TABLE mesas(
@@ -41,19 +41,22 @@ CREATE TABLE productos(
     ) AUTO_INCREMENT = 101;
     
 INSERT INTO productos(sector, descripcion, precio) VALUES 
-	(2, 'Amstel Lager 250ml', 449.99),
+	(2, 'Amstel Lager 750ml', 1449.99),
 	(3, 'Pastel de papa', 1699.5),
 	(3, 'Pollo y papas con crema al verdeo', 2050),
 	(4, 'Tiramisu de dulce de leche', 1250);
 /*-----------------------------------------------*/
 DROP TABLE IF EXISTS pedidos;
 CREATE TABLE pedidos(
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id CHAR(5) PRIMARY KEY,
     idMesa INT NOT NULL,
     idProducto INT NOT NULL,
     estado INT NOT NULL,
 	cliente varchar(250) NOT NULL,
+	minutos INT NOT NULL,
 	foto varchar(250) NOT NULL,
-    CONSTRAINT `estadoPedido_check` CHECK (estado = 0 OR estado = 1)
-    ) AUTO_INCREMENT = 101;
+    CONSTRAINT `estadoPedido_check` CHECK (estado = 0 OR estado = 1),
+	CONSTRAINT `idMesaFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
+	CONSTRAINT `idProductoFK` FOREIGN KEY (idProducto) REFERENCES productos (id)
+    );
 /*-----------------------------------------------*/

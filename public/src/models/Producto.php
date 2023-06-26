@@ -11,15 +11,6 @@ class Producto
     public $descripcion;
     public $precio;
 
-
-    /* public function __construct($id = "", $descripcion = "", $precio = "", $sector = "")
-    {
-        $this->id = intval($id);
-        $this->sector = intval($sector);
-        $this->precio = doubleval($precio);
-        $this->descripcion = $descripcion;
-    } */
-
 	public function CrearProducto()
     {
         $objAccesoDatos = AccesoDatos::ObtenerInstancia();
@@ -27,7 +18,7 @@ class Producto
 
         $req->bindValue(':sector', $this->sector, PDO::PARAM_INT);
         $req->bindValue(':descripcion', $this->descripcion, PDO::PARAM_STR);
-        $req->bindValue(':precio', doubleval($this->precio));
+        $req->bindValue(':precio', (string)$this->precio, PDO::PARAM_STR);
         $req->execute();
 
         return $objAccesoDatos->ObtenerUltimoId();
@@ -48,4 +39,15 @@ class Producto
 		$req->execute();
 		return $req->fetchAll(PDO::FETCH_COLUMN);
 	}
+
+	public static function TraerPorId($id)
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+		$req = $objAccesoDatos->PrepararConsulta("SELECT * from productos WHERE id LIKE :id");
+		$req->bindValue(':id', $id, PDO::PARAM_STR);
+		$req->execute();
+
+		return $req->fetchAll(PDO::FETCH_CLASS, 'Producto');
+	}
+
 }

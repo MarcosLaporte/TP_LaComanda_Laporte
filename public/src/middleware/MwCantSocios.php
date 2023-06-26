@@ -13,16 +13,16 @@ class MwCantSocios
 
 		if (isset($params['rol'])) {
 			if (!strcasecmp($params['rol'], "socio")) {
-				if (count(Usuario::TraerSocios()) < 3) {
+				if (count(Usuario::TraerPorRol("socio")) < 3) {
 					$response = $handler->handle($request);
 				} else {
-					$response->getBody()->write("No se pueden ingresar más socios!");
+					$response->getBody()->write(json_encode(array("msg" => "No se pueden ingresar mas socios!")));
 				}
 			} else {
 				$response = $handler->handle($request);
 			}
 		} else {
-			$response->getBody()->write("Ingrese el rol del empleado!");
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el rol del empleado!")));
 		}
 
 
