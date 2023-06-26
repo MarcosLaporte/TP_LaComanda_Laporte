@@ -68,7 +68,7 @@ class UsuarioController extends Usuario implements IPdo
 				$payload = json_encode(array('msg' => "OK", 'rol' => $usuario[0]->rol));
 				
 				$jwt = AutentificadorJWT::CrearToken(array('id' => $usuario[0]->id, 'rol' => $usuario[0]->rol));
-				setcookie("token", $jwt, time()+900, '/', "localhost", false, true);
+				setcookie("token", $jwt, time()+1800, '/', "localhost", false, true);
 			} else {
 				$payload = json_encode(array('msg' => "Los datos del usuario #{$params['id']} no coinciden."));
 			}
