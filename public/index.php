@@ -40,7 +40,7 @@ $app->get('[/]', function (Request $request, Response $response, array $args) {
 	return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->post('/login[/]', \UsuarioController::class . ':Login');
+$app->post('/login', \UsuarioController::class . ':Login');
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
 	$group->post('[/]', \UsuarioController::class . ':Add')->add(new MwCantSocios())->add(new MwRolUsuario())->add(new MwUsuario());
@@ -50,6 +50,8 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
 $app->group('/productos', function (RouteCollectorProxy $group) {
 	$group->post('[/]', \ProductoController::class . ':Add')->add(new MwSectoresProductos())->add(new MwProducto())->add(new MwEmpleado());
 	$group->get('[/]', \ProductoController::class . ':GetAll')->add(new MwEmpleado());
+	$group->post('/csv', \ProductoController::class . ':CargarCsv')->add(new MwSocio());
+	$group->get('/csv', \ProductoController::class . ':DescargarCsv')->add(new MwSocio());
 });
 
 $app->group('/mesas', function (RouteCollectorProxy $group) {

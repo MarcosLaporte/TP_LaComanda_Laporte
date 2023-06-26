@@ -1,6 +1,7 @@
 <?php
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+
 include_once __DIR__ . "\..\models\Producto.php";
 include_once __DIR__ . "\..\interfaces\IPdo.php";
 
@@ -17,7 +18,7 @@ class ProductoController extends Producto implements IPdo
 		$producto->CrearProducto();
 
 		$payload = json_encode(array("msg" => "Producto creado con exito"));
-	    $response->getBody()->write($payload);
+		$response->getBody()->write($payload);
 
 		return $response->withHeader('Content-Type', 'application/json');
 	}
@@ -25,7 +26,7 @@ class ProductoController extends Producto implements IPdo
 	public static function GetAll(Request $request, Response $response, array $args)
 	{
 		$productos = Producto::TraerTodos();
-		
+
 		$payload = json_encode(array("list" => $productos));
 		$response->getBody()->write($payload);
 
@@ -36,15 +37,38 @@ class ProductoController extends Producto implements IPdo
 	{
 
 	}
-	
+
 	public static function Delete(Request $request, Response $response, array $args)
 	{
 
 	}
-	
+
 	public static function Modify(Request $request, Response $response, array $args)
 	{
 
 	}
-	
+
+	public static function CargarCsv(Request $request, Response $response, array $args)
+	{
+		if (Producto::SubirDatosCsv())
+			$payload = json_encode(array("msg" => "Los datos del archivo se subieron correctamente!"));
+		else
+			$payload = json_encode(array("msg" => "Hubo un problema al subir los datos del archivo."));
+
+		$response->getBody()->write($payload);
+		return $response->withHeader('Content-Type', 'application/json');
+	}
+
+	public static function DescargarCsv(Request $request, Response $response, array $args)
+	{
+		$ruta = $request->getParsedBody();
+		
+		if (Producto::DbToCsv("src\csv\database.csv"))
+			$payload = json_encode(array("msg" => "Los productos se bajaron correctamente!"));
+		else
+			$payload = json_encode(array("msg" => "Hubo un problema al bajar los productos."));
+
+		$response->getBody()->write($payload);
+		return $response->withHeader('Content-Type', 'application/json');
+	}
 }

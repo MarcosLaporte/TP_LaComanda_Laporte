@@ -50,4 +50,60 @@ class Producto
 		return $req->fetchAll(PDO::FETCH_CLASS, 'Producto');
 	}
 
+	private static function CsvToProducto($rutaArchivo)
+	{
+		$refArchivo = fopen($rutaArchivo, "r");
+		$arrayAtr = array();
+		$datos = array();
+
+		if ($refArchivo) {
+			while (!feof($refArchivo)) {
+				$arrayAtr = fgetcsv($refArchivo);
+				if (!empty($arrayAtr)) {
+					$producto = new Producto();
+					$producto->sector = intval($arrayAtr[1]);
+					$producto->descripcion = str_ireplace("_", ",", $arrayAtr[2]);
+					$producto->precio = doubleval($arrayAtr[3]);
+					array_push($datos, $producto);
+				}
+			}
+			fclose($refArchivo);
+		}
+
+		return $datos;
+	}
+	
+	public static function SubirDatosCsv()
+	{
+		$archivo = Archivo::GuardarArchivoPeticion("src/csv/", "productos", 'csv', '.csv');
+		if ($archivo != "N/A") {
+			$arrayProd = self::CsvToProducto($archivo);
+			foreach ($arrayProd as $producto) {
+				$producto->CrearProducto();
+			}
+			return true;
+		} else return false;
+	}
+	
+	public static function DbToCsv($rutaArchivo)
+	{
+		$productos = self::TraerTodos();
+
+		if (!empty($productos)) {
+			$refArchivo = fopen($rutaArchivo, "w");
+			if ($refArchivo) {
+				foreach ($productos as $producto) {
+					$producto->descripcion = str_ireplace(",", "_", $producto->descripcion);
+					$attr = get_object_vars($producto);
+					$strProd = implode(',', $attr) . PHP_EOL;
+
+					fwrite($refArchivo, $strProd);
+				}
+				return fclose($refArchivo);
+			}
+		}
+
+		return false;
+	}
+
 }
