@@ -111,10 +111,10 @@ class MwEncuesta
 			if (
 				!empty(intval($params['idMesa']))
 				&& !empty($params['idPedido'])
-				&& MwEncuesta::PuntuacionValida($params['puntMesa'])
-				&& MwEncuesta::PuntuacionValida($params['puntRestaurante'])
-				&& MwEncuesta::PuntuacionValida($params['puntMozo'])
-				&& MwEncuesta::PuntuacionValida($params['puntCocina'])
+				&& self::PuntuacionValida($params['puntMesa'])
+				&& self::PuntuacionValida($params['puntRestaurante'])
+				&& self::PuntuacionValida($params['puntMozo'])
+				&& self::PuntuacionValida($params['puntCocina'])
 				&& !empty($params['comentarios'])
 			) {
 				$response = $handler->handle($request);

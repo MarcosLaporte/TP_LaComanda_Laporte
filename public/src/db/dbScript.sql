@@ -56,8 +56,8 @@ CREATE TABLE pedidos(
 	minutos INT NOT NULL,
 	foto VARCHAR(250) NOT NULL,
     CONSTRAINT `estadoPedido_check` CHECK (estado = 0 OR estado = 1),
-	CONSTRAINT `idMesaPedFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
-	CONSTRAINT `idProductoPedFK` FOREIGN KEY (idProducto) REFERENCES productos (id)
+	CONSTRAINT `idMesaFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
+	CONSTRAINT `idProductoFK` FOREIGN KEY (idProducto) REFERENCES productos (id)
     );
 /*-----------------------------------------------*/
 DROP TABLE IF EXISTS encuestas;
@@ -74,7 +74,14 @@ CREATE TABLE encuestas(
     CONSTRAINT `puntRestaurante_check` CHECK (puntRestaurante >= 1 AND puntRestaurante <= 10),
     CONSTRAINT `puntMozo_check` CHECK (puntMozo >= 1 AND puntMozo <= 10),
     CONSTRAINT `puntCocina_check` CHECK (puntCocina >= 1 AND puntCocina <= 10),
-	CONSTRAINT `idMesaEncFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
-	CONSTRAINT `idPedidoEncFK` FOREIGN KEY (idPedido) REFERENCES pedidos (id)
+	CONSTRAINT `idMesaFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
+	CONSTRAINT `idPedidoFK` FOREIGN KEY (idPedido) REFERENCES pedidos (id)
     ) AUTO_INCREMENT = 1;
 /*-----------------------------------------------*/
+DROP TABLE IF EXISTS logs;
+CREATE TABLE logs(
+	idUser INT NOT NULL,
+	fecha VARCHAR(11),
+	hora VARCHAR(11),
+	CONSTRAINT `idUserFK` FOREIGN KEY (idUser) REFERENCES usuarios (id)
+);

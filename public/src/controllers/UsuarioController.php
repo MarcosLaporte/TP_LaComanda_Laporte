@@ -4,6 +4,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 include_once __DIR__ . "\..\models\Usuario.php";
 include_once __DIR__ . "\..\models\AutentificadorJWT.php";
+include_once __DIR__ . "\..\db\AccesoDatos.php";
 include_once __DIR__ . "\..\interfaces\IPdo.php";
 
 class UsuarioController extends Usuario implements IPdo
@@ -58,7 +59,7 @@ class UsuarioController extends Usuario implements IPdo
 	public static function Login(Request $request, Response $response, array $args)
 	{
 		$params = $request->getParsedBody();
-		
+
 		if (isset($params['id']) && isset($params['usuario']) && isset($params['clave'])) {
 			$usuario = Usuario::TraerPorId($params['id']);
 			if (!empty($usuario)) {
@@ -68,9 +69,11 @@ class UsuarioController extends Usuario implements IPdo
 				) {
 					$payload = json_encode(array('msg' => "OK", 'rol' => $usuario[0]->rol));
 
-					$jwt = AutentificadorJWT::CrearToken(array('id' => $usuario[0]->id, 'rol' => $usuario[0]->rol));
+					$jwt = AutentificadorJWT::CrearToken(array('id' => $usuario[0]->id, 'rol' => $usuario[0]->rol, 'fecha' => date('Y-m-d'), 'hora' => date('H:i:s')));
 					setcookie("token", $jwt, time() + 1800, '/', "localhost", false, true);
+					self::AlmacenarLog($jwt);
 				} else {
+					//Borra cookie existente
 					setcookie("token", " ", time() - 3600, "/", "localhost", false, true);
 					$payload = json_encode(array('msg' => "Los datos del usuario #{$params['id']} no coinciden."));
 				}
@@ -83,5 +86,21 @@ class UsuarioController extends Usuario implements IPdo
 
 		$response->getBody()->write($payload);
 		return $response->withHeader('Content-Type', 'application/json');
+	}
+
+	private static function AlmacenarLog($jwt)
+	{
+		try {
+			AutentificadorJWT::VerificarToken($jwt);
+			$data = AutentificadorJWT::ObtenerData($jwt);
+			$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+			$req = $objAccesoDatos->PrepararConsulta("INSERT INTO logs (idUser, fecha, hora) VALUES (:idUser, :fecha, :hora)");
+			$req->bindValue(':idUser', $data->id, PDO::PARAM_INT);
+			$req->bindValue(':fecha', $data->fecha, PDO::PARAM_STR);
+			$req->bindValue(':hora', $data->hora, PDO::PARAM_STR);
+			$req->execute();
+		} catch (Exception $ex) {
+			throw new Exception("Error al almacenar el log.");
+		}
 	}
 }
