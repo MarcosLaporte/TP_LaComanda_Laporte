@@ -59,14 +59,12 @@ class MwPedido
 	{
 		$response = new Response();
 		$params = $request->getParsedBody();
-		$paramFiles = $request->getUploadedFiles();
 
 		if (isset($params['idMesa']) && isset($params['idProducto']) && isset($params['cliente']) && isset($paramFiles['foto'])) {
 			if (
 				!empty(intval($params['idMesa']))
 				&& !empty(intval($params['idProducto']))
 				&& !empty($params['cliente'])
-				&& $paramFiles['foto']->getError() == UPLOAD_ERR_OK
 			) {
 				$response = $handler->handle($request);
 			} else {

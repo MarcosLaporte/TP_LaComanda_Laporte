@@ -77,7 +77,7 @@ class MwEstadoPedido
 					$response->getBody()->write(json_encode(array("msg" => "No existe un pedido con ese ID.")));
 				}
 			} else 
-				$response->getBody()->write(json_encode(array("msg" => "ingrese el ID del pedido.")));
+				$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID del pedido.")));
 		} else {
 			$response->getBody()->write(json_encode(array("msg" => "No hay un token registrado. Inicie sesion.")));
 		}

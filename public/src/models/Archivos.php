@@ -2,44 +2,21 @@
 
 class Archivo
 {
-	public static function GuardarJson($path, $arrayDatos)
-	{
-		$refArchivo = fopen($path, "w");
-		if ($refArchivo) {
-			$datosJson = json_encode($arrayDatos);
-			fputs($refArchivo, $datosJson);
-			return fclose($refArchivo);
-		}
-
-		return false;
-	}
-
-	public static function LeerJson($path)
-	{
-		$arrayDatos = array();
-		if (file_exists($path)) {
-			$refArchivo = fopen($path, "r");
-			$datosJson = file_get_contents($path);
-			if ($datosJson)
-				$arrayDatos = json_decode($datosJson);
-
-			fclose($refArchivo);
-		} else {
-			echo "El archivo '$path' no existe.<br>";
-		}
-
-		return $arrayDatos;
-	}
-
 	public static function GuardarImagenDePeticion($directorio, $nuevoNombre, $imageKey = 'imagen')
 	{
 		if (!is_dir($directorio))
 			mkdir($directorio, 0777, true);
 
+		if (!isset($_FILES[$imageKey]))
+			return "N/A";
+
 		$tmpName = $_FILES[$imageKey]["tmp_name"];
 		$destino = $directorio . $nuevoNombre . '.jpg';
 
-		return move_uploaded_file($tmpName, $destino);
+		if (move_uploaded_file($tmpName, $destino))
+			return $destino;
+		else
+			return "N/A";
 	}
 
 	public static function MoverImagen($origen, $destino, $archivo)
@@ -48,6 +25,5 @@ class Archivo
 			mkdir($destino, 0777, true);
 
 		return rename($origen . $archivo, $destino . $archivo);
-
 	}
 }

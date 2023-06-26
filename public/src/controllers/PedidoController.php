@@ -13,13 +13,10 @@ class PedidoController extends Pedido implements IPdo
 
 		$pedido = new Pedido();
 		$pedido->id = substr(uniqid(), -5);
-		$pedido->idMesa = $params['idMesa'];
 		$pedido->idProducto = $params['idProducto'];
 		$pedido->estado = PEDIDO_PREPARACION;
 		$pedido->cliente = $params['cliente'];
-		$pedido->minutos = intval($params['minutos']);
-		Archivo::GuardarImagenDePeticion(__DIR__ . "/../../src/FotosMesas/", $pedido->cliente, 'foto');
-		$pedido->foto = "public/src/FotosMesas/$pedido->cliente.jpg";
+		$pedido->foto = Archivo::GuardarImagenDePeticion("public/src/FotosPedidos/", $pedido->cliente, 'foto');
 		$pedido->CrearPedido();
 
 		$payload = json_encode(array("msg" => "Pedido creado con exito"));

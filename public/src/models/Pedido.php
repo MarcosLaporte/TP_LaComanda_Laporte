@@ -1,13 +1,11 @@
 <?php
-
-include_once "Producto.php";
-
 define('PEDIDO_PREPARACION', 0);
 define('PEDIDO_LISTO', 1);
+
 class Pedido
 {
 	public $id;
-	public $idMesa;
+	public $idConjunto;
 	public $idProducto;
 	public $estado;
 	public $cliente;
@@ -17,12 +15,12 @@ class Pedido
 	public function CrearPedido()
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
-		$req = $objAccesoDatos->PrepararConsulta("INSERT INTO pedidos (id, idMesa, idProducto, estado, cliente, minutos, foto) " .
-			"VALUES (:id, :idMesa, :idProducto, 0, :nombreCliente, :minutos, :foto)");
+		$req = $objAccesoDatos->PrepararConsulta("INSERT INTO pedidos (id, idConjunto, idProducto, estado, cliente, minutos, foto) " .
+			"VALUES (:id, :idConjunto, :idProducto, 0, :nombreCliente, :minutos, :foto)");
 
 
 		$req->bindValue(':id', $this->id, PDO::PARAM_STR);
-		$req->bindValue(':idMesa', $this->idMesa, PDO::PARAM_INT);
+		$req->bindValue(':idConjunto', $this->idConjunto, PDO::PARAM_INT);
 		$req->bindValue(':idProducto', $this->idProducto, PDO::PARAM_INT);
 		$req->bindValue(':nombreCliente', $this->cliente, PDO::PARAM_STR);
 		$req->bindValue(':minutos', $this->minutos, PDO::PARAM_INT);
