@@ -59,14 +59,12 @@ class MwPedido
 	{
 		$response = new Response();
 		$params = $request->getParsedBody();
-		$paramFiles = $request->getUploadedFiles();
 
-		if (isset($params['idMesa']) && isset($params['idProducto']) && isset($params['cliente']) && isset($paramFiles['foto'])) {
+		if (isset($params['idMesa']) && isset($params['idProducto']) && isset($params['cliente'])) {
 			if (
 				!empty(intval($params['idMesa']))
 				&& !empty(intval($params['idProducto']))
 				&& !empty($params['cliente'])
-				&& $paramFiles['foto']->getError() == UPLOAD_ERR_OK
 			) {
 				$response = $handler->handle($request);
 			} else {
@@ -102,32 +100,36 @@ class MwMesa
 	}
 }
 
-class MwLogin
+class MwEncuesta
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
 		$response = new Response();
 		$params = $request->getParsedBody();
 
-		if (isset($params['id']) && isset($params['usuario']) && isset($params['clave'])) {
-			$idUser = $params['id'];
-			$usuario = Usuario::TraerPorId($idUser);
-			if (!empty($usuario)) {
-				if (
-					!strcasecmp($usuario[0]->usuario, $params['usuario'])
-					&& password_verify($params['clave'], $usuario[0]->clave)
-				) {
-					$response = $handler->handle($request);
-				} else {
-					$response->getBody()->write(json_encode(array("msg" => "El usuario y la clave no coinciden!")));
-				}
+		if (isset($params['idMesa']) && isset($params['idPedido']) && isset($params['puntMesa']) && isset($params['puntRestaurante']) && isset($params['puntMozo']) && isset($params['puntCocina']) && isset($params['comentarios'])) {
+			if (
+				!empty(intval($params['idMesa']))
+				&& !empty($params['idPedido'])
+				&& MwEncuesta::PuntuacionValida($params['puntMesa'])
+				&& MwEncuesta::PuntuacionValida($params['puntRestaurante'])
+				&& MwEncuesta::PuntuacionValida($params['puntMozo'])
+				&& MwEncuesta::PuntuacionValida($params['puntCocina'])
+				&& !empty($params['comentarios'])
+			) {
+				$response = $handler->handle($request);
 			} else {
-				$response->getBody()->write(json_encode(array("msg" => "No existe un usuario con ese id!")));
+				$response->getBody()->write(json_encode(array("msg" => "Revise los datos ingresados!")));
 			}
 		} else {
-			$response->getBody()->write(json_encode(array("msg" => "Ingrese los datos para el login!")));
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese los datos de la encuesta!")));
 		}
 
 		return $response->withHeader('Content-Type', 'application/json');
+	}
+
+	private static function PuntuacionValida($punt)
+	{
+		return intval($punt) >= 1 && intval($punt) <= 10;
 	}
 }

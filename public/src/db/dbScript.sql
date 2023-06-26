@@ -27,7 +27,7 @@ CREATE TABLE mesas(
     id INT(5) PRIMARY KEY AUTO_INCREMENT,
     estado INT NOT NULL,
     CONSTRAINT `estadoMesa_check` CHECK (estado >= 1 AND estado <= 4)
-    ) AUTO_INCREMENT = 10001;
+    ) AUTO_INCREMENT = 1001;
     
 INSERT INTO mesas(estado) VALUES (1),(1),(3),(4);
 /*-----------------------------------------------*/
@@ -56,21 +56,25 @@ CREATE TABLE pedidos(
 	minutos INT NOT NULL,
 	foto VARCHAR(250) NOT NULL,
     CONSTRAINT `estadoPedido_check` CHECK (estado = 0 OR estado = 1),
-	CONSTRAINT `idMesaFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
-	CONSTRAINT `idProductoFK` FOREIGN KEY (idProducto) REFERENCES productos (id)
+	CONSTRAINT `idMesaPedFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
+	CONSTRAINT `idProductoPedFK` FOREIGN KEY (idProducto) REFERENCES productos (id)
     );
 /*-----------------------------------------------*/
 DROP TABLE IF EXISTS encuestas;
 CREATE TABLE encuestas(
     id INT PRIMARY KEY AUTO_INCREMENT,
-	mesa INT NOT NULL,
-	restaurante INT NOT NULL,
-	mozo INT NOT NULL,
-	cocina INT NOT NULL,
+	idMesa INT NOT NULL,
+	idPedido CHAR(5) NOT NULL,
+	puntMesa INT NOT NULL,
+	puntRestaurante INT NOT NULL,
+	puntMozo INT NOT NULL,
+	puntCocina INT NOT NULL,
 	comentarios VARCHAR(66) NOT NULL,
-    CONSTRAINT `puntMesa_check` CHECK (mesa >= 1 AND mesa <= 10),
-    CONSTRAINT `puntRestaurante_check` CHECK (restaurante >= 1 AND restaurante <= 10),
-    CONSTRAINT `puntMozo_check` CHECK (mozo >= 1 AND mozo <= 10),
-    CONSTRAINT `puntCocina_check` CHECK (cocina >= 1 AND cocina <= 10)
+    CONSTRAINT `puntMesa_check` CHECK (puntMesa >= 1 AND puntMesa <= 10),
+    CONSTRAINT `puntRestaurante_check` CHECK (puntRestaurante >= 1 AND puntRestaurante <= 10),
+    CONSTRAINT `puntMozo_check` CHECK (puntMozo >= 1 AND puntMozo <= 10),
+    CONSTRAINT `puntCocina_check` CHECK (puntCocina >= 1 AND puntCocina <= 10),
+	CONSTRAINT `idMesaEncFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
+	CONSTRAINT `idPedidoEncFK` FOREIGN KEY (idPedido) REFERENCES pedidos (id)
     ) AUTO_INCREMENT = 1;
 /*-----------------------------------------------*/

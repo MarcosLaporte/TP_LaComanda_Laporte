@@ -16,12 +16,13 @@ include_once '.\src\controllers\UsuarioController.php';
 include_once '.\src\controllers\ProductoController.php';
 include_once '.\src\controllers\MesaController.php';
 include_once '.\src\controllers\PedidoController.php';
+include_once '.\src\controllers\EncuestaController.php';
 
 include_once '.\src\middleware\MwParams.php';
 include_once '.\src\middleware\MwRolUsuario.php';
 include_once '.\src\middleware\MwCantSocios.php';
 include_once '.\src\middleware\MwSectorProducto.php';
-include_once '.\src\middleware\MwIdsPedido.php';
+include_once '.\src\middleware\MwIds.php';
 include_once '.\src\middleware\MwTareasABM.php';
 include_once '.\src\middleware\MwLogs.php';
 
@@ -39,29 +40,34 @@ $app->get('[/]', function (Request $request, Response $response, array $args) {
 	return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->post('/login[/]', \UsuarioController::class . ':Login')->add(new MwLogin());
+$app->post('/login[/]', \UsuarioController::class . ':Login');
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
 	$group->post('[/]', \UsuarioController::class . ':Add')->add(new MwCantSocios())->add(new MwRolUsuario())->add(new MwUsuario());
 	$group->get('[/]', \UsuarioController::class . ':GetAll');
-});
+})->add(new MwSocio());
 
 $app->group('/productos', function (RouteCollectorProxy $group) {
-	$group->post('[/]', \ProductoController::class . ':Add')->add(new MwSectoresProductos())->add(new MwProducto());
+	$group->post('[/]', \ProductoController::class . ':Add')->add(new MwSectoresProductos())->add(new MwProducto())->add(new MwEmpleado());
 	$group->get('[/]', \ProductoController::class . ':GetAll')->add(new MwEmpleado());
 });
 
 $app->group('/mesas', function (RouteCollectorProxy $group) {
-	$group->post('[/]', \MesaController::class . ':Add')->add(new MwMesa());
+	$group->post('[/]', \MesaController::class . ':Add')->add(new MwMesa())->add(new MwSocio());
 	$group->get('[/]', \MesaController::class . ':GetAll')->add(new MwEmpleado());
-	$group->put('/{id}', \MesaController::class . ':Modify')->add(new MwEstadoMesas())->add(new MwMesa());
+	$group->put('/{id}', \MesaController::class . ':Modify')->add(new MwEstadoMesas())->add(new MwMesa())->add(new MwEmpleado());
 });
 
 $app->group('/pedidos', function (RouteCollectorProxy $group) {
-	$group->post('[/]', \PedidoController::class . ':Add')->add(new MwMozo())->add(new MwIdProdPedido())->add(new MwIdMesaPedido())->add(new MwPedido());
-	$group->get('[/]', \PedidoController::class . ':GetAll')->add(new MwSocio());
+	$group->post('[/]', \PedidoController::class . ':Add')->add(new MwIdProd())->add(new MwIdMesa())->add(new MwPedido())->add(new MwMozo());
+	$group->get('[/]', \PedidoController::class . ':GetAll')->add(new MwEmpleado());
 	$group->get('/{id}', \PedidoController::class . ':GetOne');
-	$group->put('/{id}', \PedidoController::class . ':Modify')->add(new MwEstadoPedido());
+	$group->put('/{id}', \PedidoController::class . ':Modify')->add(new MwEstadoPedido())->add(new MwEmpleado());
+});
+
+$app->group('/encuestas', function (RouteCollectorProxy $group) {
+	$group->post('[/]', \EncuestaController::class . ':Add')->add(new MwEncuesta())->add(new MwIdMesa())->add(new MwIdPedido());
+	$group->get('[/]', \EncuestaController::class . ':GetAll')->add(new MwSocio());
 });
 
 $app->run();

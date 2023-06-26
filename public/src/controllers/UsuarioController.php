@@ -52,28 +52,33 @@ class UsuarioController extends Usuario implements IPdo
 
 	public static function Modify(Request $request, Response $response, array $args)
 	{
-		
+
 	}
 
 	public static function Login(Request $request, Response $response, array $args)
 	{
 		$params = $request->getParsedBody();
-		$usuario = Usuario::TraerPorId($params['id']);
+		
+		if (isset($params['id']) && isset($params['usuario']) && isset($params['clave'])) {
+			$usuario = Usuario::TraerPorId($params['id']);
+			if (!empty($usuario)) {
+				if (
+					!strcasecmp($params['usuario'], $usuario[0]->usuario)
+					&& password_verify($params['clave'], $usuario[0]->clave)
+				) {
+					$payload = json_encode(array('msg' => "OK", 'rol' => $usuario[0]->rol));
 
-		if (!empty($usuario)) {
-			if (
-				!strcasecmp($params['usuario'], $usuario[0]->usuario)
-				&& password_verify($params['clave'], $usuario[0]->clave)
-			) {
-				$payload = json_encode(array('msg' => "OK", 'rol' => $usuario[0]->rol));
-				
-				$jwt = AutentificadorJWT::CrearToken(array('id' => $usuario[0]->id, 'rol' => $usuario[0]->rol));
-				setcookie("token", $jwt, time()+1800, '/', "localhost", false, true);
+					$jwt = AutentificadorJWT::CrearToken(array('id' => $usuario[0]->id, 'rol' => $usuario[0]->rol));
+					setcookie("token", $jwt, time() + 1800, '/', "localhost", false, true);
+				} else {
+					setcookie("token", " ", time() - 3600, "/", "localhost", false, true);
+					$payload = json_encode(array('msg' => "Los datos del usuario #{$params['id']} no coinciden."));
+				}
 			} else {
-				$payload = json_encode(array('msg' => "Los datos del usuario #{$params['id']} no coinciden."));
+				$payload = json_encode(array('msg' => "No existe un usuario con ese id."));
 			}
 		} else {
-			$payload = json_encode(array('msg' => "No existe un usuario con ese id."));
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese los datos para el login!")));
 		}
 
 		$response->getBody()->write($payload);

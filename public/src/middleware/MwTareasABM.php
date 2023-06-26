@@ -12,37 +12,33 @@ class MwEstadoMesas
 	{
 		$response = new Response();
 		$params = $request->getParsedBody();
+		$token = $_COOKIE['token'];
 
-		if (isset($_COOKIE['token'])) {
-			$token = $_COOKIE['token'];
-			try {
-				AutentificadorJWT::VerificarToken($token);
-				$dataJWT = AutentificadorJWT::ObtenerData($token);
-				switch ($params['estado']) {
-					case MESA_CERRADA:
-						if (!strcasecmp($dataJWT->rol, "socio")) {
-							$response = $handler->handle($request);
-						} else {
-							$response->getBody()->write(json_encode(array("msg" => "Solo los socios pueden realizar esta accion!")));
-						}
-						break;
-					case MESA_ESPERANDO:
-					case MESA_COMIENDO:
-					case MESA_PAGANDO:
-						if (!strcasecmp($dataJWT->rol, "mozo")) {
-							$response = $handler->handle($request);
-						} else {
-							$response->getBody()->write(json_encode(array("msg" => "Solo los mozos pueden realizar esta accion!")));
-						}
-						break;
-					default:
-						$response->getBody()->write(json_encode(array("msg" => "No existe ese estado de mesa.")));
-				}
-			} catch (Exception $ex) {
-				$response->getBody()->write($ex->getMessage());
+		try {
+			AutentificadorJWT::VerificarToken($token);
+			$dataJWT = AutentificadorJWT::ObtenerData($token);
+			switch ($params['estado']) {
+				case MESA_CERRADA:
+					if (!strcasecmp($dataJWT->rol, "socio")) {
+						$response = $handler->handle($request);
+					} else {
+						$response->getBody()->write(json_encode(array("msg" => "Solo los socios pueden realizar esta accion!")));
+					}
+					break;
+				case MESA_ESPERANDO:
+				case MESA_COMIENDO:
+				case MESA_PAGANDO:
+					if (!strcasecmp($dataJWT->rol, "mozo")) {
+						$response = $handler->handle($request);
+					} else {
+						$response->getBody()->write(json_encode(array("msg" => "Solo los mozos pueden realizar esta accion!")));
+					}
+					break;
+				default:
+					$response->getBody()->write(json_encode(array("msg" => "No existe ese estado de mesa.")));
 			}
-		} else {
-			$response->getBody()->write(json_encode(array("msg" => "No hay un token registrado. Inicie sesion.")));
+		} catch (Exception $ex) {
+			$response->getBody()->write($ex->getMessage());
 		}
 
 		return $response;
@@ -56,30 +52,27 @@ class MwEstadoPedido
 		$response = new Response();
 		$params = $request->getParsedBody();
 
-		if (isset($_COOKIE['token'])) {
-			if (isset($params['id'])) {
-				$pedido = Pedido::TraerPorId($params['id']);
-				if (!empty($pedido)) {
-					$producto = Producto::TraerPorId($pedido[0]->idProducto)[0];
-					$token = $_COOKIE['token'];
-					try {
-						AutentificadorJWT::VerificarToken($token);
-						$dataJWT = AutentificadorJWT::ObtenerData($token);
-						if (Pedido::SectorYEmpleadoValido($producto->sector, $dataJWT->rol)) {
-							$response = $handler->handle($request);
-						} else {
-							$response->getBody()->write(json_encode(array("msg" => "Esta tarea no le corresponde a un $dataJWT->rol.")));
-						}
-					} catch (Exception $ex) {
-						$response->getBody()->write($ex->getMessage());
+		if (isset($params['id'])) {
+			$pedido = Pedido::TraerPorId($params['id']);
+			if (!empty($pedido)) {
+				$producto = Producto::TraerPorId($pedido[0]->idProducto)[0];
+				$token = $_COOKIE['token'];
+				try {
+					AutentificadorJWT::VerificarToken($token);
+					$dataJWT = AutentificadorJWT::ObtenerData($token);
+					if (Pedido::SectorYEmpleadoValido($producto->sector, $dataJWT->rol)) {
+						$response = $handler->handle($request);
+					} else {
+						$response->getBody()->write(json_encode(array("msg" => "Esta tarea no le corresponde a un $dataJWT->rol.")));
 					}
-				} else {
-					$response->getBody()->write(json_encode(array("msg" => "No existe un pedido con ese ID.")));
+				} catch (Exception $ex) {
+					$response->getBody()->write($ex->getMessage());
 				}
-			} else 
-				$response->getBody()->write(json_encode(array("msg" => "ingrese el ID del pedido.")));
+			} else {
+				$response->getBody()->write(json_encode(array("msg" => "No existe un pedido con ese ID.")));
+			}
 		} else {
-			$response->getBody()->write(json_encode(array("msg" => "No hay un token registrado. Inicie sesion.")));
+			$response->getBody()->write(json_encode(array("msg" => "ingrese el ID del pedido.")));
 		}
 
 		return $response;

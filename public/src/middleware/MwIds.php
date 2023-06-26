@@ -3,7 +3,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
 
-class MwIdMesaPedido
+class MwIdMesa
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
@@ -30,15 +30,38 @@ class MwIdMesaPedido
 	}
 }
 
-class MwIdProdPedido
+class MwIdPedido
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
 		$response = new Response();
 		$params = $request->getParsedBody();
-		$idProductos = Producto::TraerTodosId();
+		$pedidosId = Pedido::TraerTodosId();
+
+		if (isset($params['idPedido'])) {
+			if (in_array($params['idPedido'], $pedidosId)) {
+				$response = $handler->handle($request);
+			} else {
+				$response->getBody()->write(json_encode(array("msg" => "Revise el ID del pedido!")));
+			}
+		} else {
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID del pedido!")));
+		}
+
+
+		return $response;
+	}
+}
+
+class MwIdProd
+{
+	public function __invoke(Request $request, RequestHandler $handler): Response
+	{
+		$response = new Response();
+		$params = $request->getParsedBody();
+		$productosId = Producto::TraerTodosId();
 		if (isset($params['idProducto'])) {
-			if (in_array($params['idProducto'], $idProductos)) {
+			if (in_array($params['idProducto'], $productosId)) {
 				$response = $handler->handle($request);
 			} else {
 				$response->getBody()->write(json_encode(array("msg" => "Revise el ID del producto!")));
