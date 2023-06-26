@@ -19,5 +19,8 @@ class Encuesta
 		$req->bindValue(':comentarios', $this->comentarios, PDO::PARAM_STR);
 		$req->execute();
 
+		return $objAccesoDatos->ObtenerUltimoId();
 	}
+
+	
 }

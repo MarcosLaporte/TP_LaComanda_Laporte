@@ -5,9 +5,9 @@ USE comanda_laporte;
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios(
     id INT PRIMARY KEY AUTO_INCREMENT,
-    usuario varchar(50) NOT NULL,
-    clave varchar(250) NOT NULL,
-    rol varchar(13) NOT NULL,
+    usuario VARCHAR(50) NOT NULL,
+    clave VARCHAR(250) NOT NULL,
+    rol VARCHAR(13) NOT NULL,
     CONSTRAINT `rol_check` CHECK (
 		rol LIKE 'bartender' OR
 		rol LIKE 'cervecero' OR
@@ -35,7 +35,7 @@ DROP TABLE IF EXISTS productos;
 CREATE TABLE productos(
     id INT PRIMARY KEY AUTO_INCREMENT,
     sector INT NOT NULL,
-	descripcion varchar(250) NOT NULL,
+	descripcion VARCHAR(250) NOT NULL,
 	precio FLOAT NOT NULL,
     CONSTRAINT `sector_check` CHECK (sector >= 1 AND sector <= 4)
     ) AUTO_INCREMENT = 101;
@@ -52,11 +52,25 @@ CREATE TABLE pedidos(
     idMesa INT NOT NULL,
     idProducto INT NOT NULL,
     estado INT NOT NULL,
-	cliente varchar(250) NOT NULL,
+	cliente VARCHAR(250) NOT NULL,
 	minutos INT NOT NULL,
-	foto varchar(250) NOT NULL,
+	foto VARCHAR(250) NOT NULL,
     CONSTRAINT `estadoPedido_check` CHECK (estado = 0 OR estado = 1),
 	CONSTRAINT `idMesaFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
 	CONSTRAINT `idProductoFK` FOREIGN KEY (idProducto) REFERENCES productos (id)
     );
+/*-----------------------------------------------*/
+DROP TABLE IF EXISTS encuestas;
+CREATE TABLE encuestas(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+	mesa INT NOT NULL,
+	restaurante INT NOT NULL,
+	mozo INT NOT NULL,
+	cocina INT NOT NULL,
+	comentarios VARCHAR(66) NOT NULL,
+    CONSTRAINT `puntMesa_check` CHECK (mesa >= 1 AND mesa <= 10),
+    CONSTRAINT `puntRestaurante_check` CHECK (restaurante >= 1 AND restaurante <= 10),
+    CONSTRAINT `puntMozo_check` CHECK (mozo >= 1 AND mozo <= 10),
+    CONSTRAINT `puntCocina_check` CHECK (cocina >= 1 AND cocina <= 10)
+    ) AUTO_INCREMENT = 1;
 /*-----------------------------------------------*/
