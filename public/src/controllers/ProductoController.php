@@ -61,10 +61,10 @@ class ProductoController extends Producto implements IPdo
 
 	public static function DescargarCsv(Request $request, Response $response, array $args)
 	{
-		$ruta = $request->getParsedBody();
+		$request->getParsedBody();
 		
-		if (Producto::DbToCsv("src\csv\database.csv"))
-			$payload = json_encode(array("msg" => "Los productos se bajaron correctamente!"));
+		if ($csv = Producto::DbToCsv("src/db/database.csv"))
+			$payload = json_encode(array("csv" => $csv));
 		else
 			$payload = json_encode(array("msg" => "Hubo un problema al bajar los productos."));
 
