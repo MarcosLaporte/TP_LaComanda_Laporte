@@ -18,6 +18,7 @@ class MwEstadoMesas
 			AutentificadorJWT::VerificarToken($token);
 			$dataJWT = AutentificadorJWT::ObtenerData($token);
 			switch ($params['estado']) {
+				case MESA_VACIA:
 				case MESA_CERRADA:
 					if (!strcasecmp($dataJWT->rol, "socio")) {
 						$response = $handler->handle($request);

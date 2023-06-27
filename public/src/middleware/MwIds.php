@@ -16,7 +16,7 @@ class MwIdMesa
 				if ($mesa[0]->estado == MESA_ESPERANDO || $mesa[0]->estado == MESA_COMIENDO) {
 					$response = $handler->handle($request);
 				} else {
-					$response->getBody()->write(json_encode(array("msg" => "La mesa no puede estar cerrada ni pagando!")));
+					$response->getBody()->write(json_encode(array("msg" => "La mesa no puede estar vacia, cerrada ni pagando!")));
 				}
 			} else {
 				$response->getBody()->write(json_encode(array("msg" => "Revise el ID de la mesa!")));

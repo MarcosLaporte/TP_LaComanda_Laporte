@@ -86,7 +86,7 @@ class MwMesa
 		$params = $request->getParsedBody();
 
 		if (isset($params['estado'])) {
-			if (intval($params['estado']) >= 1 && intval($params['estado']) <= 4) {
+			if (intval($params['estado']) >= 0 && intval($params['estado']) <= 4) {
 				$response = $handler->handle($request);
 			} else {
 				$response->getBody()->write(json_encode(array("msg" => "Revise el estado de mesa ingresado! (1-4)")));

@@ -1,4 +1,5 @@
 <?php
+define('MESA_VACIA', 0);
 define('MESA_ESPERANDO', 1);
 define('MESA_COMIENDO', 2);
 define('MESA_PAGANDO', 3);
@@ -51,6 +52,8 @@ class Mesa
 	public static function ParseEstado(int $numEstado)
 	{
 		switch ($numEstado) {
+			case MESA_VACIA:
+				return "VACÍA";
 			case MESA_ESPERANDO:
 				return "ESPERANDO";
 			case MESA_COMIENDO:

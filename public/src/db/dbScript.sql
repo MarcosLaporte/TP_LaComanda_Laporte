@@ -22,7 +22,7 @@ DROP TABLE IF EXISTS mesas;
 CREATE TABLE mesas(
 	id INT(5) PRIMARY KEY AUTO_INCREMENT,
 	estado INT NOT NULL,
-	CONSTRAINT `estadoMesa_check` CHECK (estado BETWEEN 1 AND 4)
+	CONSTRAINT `estadoMesa_check` CHECK (estado BETWEEN 0 AND 4)
 	) AUTO_INCREMENT = 1;
 	
 INSERT INTO mesas(estado) VALUES (1),(1),(3),(4);
