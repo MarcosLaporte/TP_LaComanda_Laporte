@@ -62,6 +62,7 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
 
 $app->group('/pedidos', function (RouteCollectorProxy $group) {
 	$group->post('[/]', \PedidoController::class . ':Add')->add(new MwIdProd())->add(new MwIdMesa())->add(new MwPedido())->add(new MwMozo());
+	$group->post('/foto', \PedidoController::class . ':AddPic')->add(new MwIdPedido())->add(new MwFoto())->add(new MwMozo());
 	$group->get('[/]', \PedidoController::class . ':GetAll')->add(new MwEmpleado());
 	$group->get('/{id}', \PedidoController::class . ':GetOne');
 	$group->put('/{id}', \PedidoController::class . ':Modify')->add(new MwEstadoPedido())->add(new MwEmpleado());

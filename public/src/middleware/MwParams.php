@@ -78,6 +78,31 @@ class MwPedido
 	}
 }
 
+class MwFoto
+{
+	public function __invoke(Request $request, RequestHandler $handler): Response
+	{
+		$response = new Response();
+		$params = $request->getParsedBody();
+		$paramFiles = $request->getUploadedFiles();
+
+		if (isset($params['idPedido']) && isset($paramFiles['foto'])) {
+			if (
+				!empty($params['idPedido'])
+				&& $paramFiles['foto']->getError() == UPLOAD_ERR_OK
+			) {
+				$response = $handler->handle($request);
+			} else {
+				$response->getBody()->write(json_encode(array("msg" => "Revise los datos ingresados!")));
+			}
+		} else {
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID del pedido y la imagen!")));
+		}
+
+		return $response;
+	}
+}
+
 class MwMesa
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response

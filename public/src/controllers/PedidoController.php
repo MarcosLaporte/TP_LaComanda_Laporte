@@ -18,10 +18,22 @@ class PedidoController extends Pedido implements IPdo
 		$pedido->estado = PEDIDO_PREPARACION;
 		$pedido->cliente = $params['cliente'];
 		$pedido->minutos = intval($params['minutos']);
-		$pedido->foto = Archivo::GuardarArchivoPeticion("src/FotosMesas/", "{$pedido->cliente}_{$pedido->idMesa}", 'foto', '.jpg');
 		$pedido->CrearPedido();
 
 		$payload = json_encode(array("msg" => "Pedido creado con exito"));
+	    $response->getBody()->write($payload);
+
+		return $response->withHeader('Content-Type', 'application/json');
+	}
+
+	public static function AddPic(Request $request, Response $response, array $args)
+	{
+		$params = $request->getParsedBody();
+		$pedido = Pedido::TraerPorId($params['idPedido'])[0];
+		$uriFoto = Archivo::GuardarArchivoPeticion("src/FotosMesas/", "{$pedido->cliente}_Mesa{$pedido->idMesa}", 'foto', '.jpg');
+
+		Pedido::AgregarUriFoto($params['idPedido'], $uriFoto);
+		$payload = json_encode(array("msg" => "Foto agregada con exito"));
 	    $response->getBody()->write($payload);
 
 		return $response->withHeader('Content-Type', 'application/json');

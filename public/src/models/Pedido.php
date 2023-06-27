@@ -18,7 +18,7 @@ class Pedido
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
 		$req = $objAccesoDatos->PrepararConsulta("INSERT INTO pedidos (id, idMesa, idProducto, estado, cliente, minutos, foto) " .
-			"VALUES (:id, :idMesa, :idProducto, 0, :nombreCliente, :minutos, :foto)");
+			"VALUES (:id, :idMesa, :idProducto, 0, :nombreCliente, :minutos, 'N/A')");
 
 
 		$req->bindValue(':id', $this->id, PDO::PARAM_STR);
@@ -26,10 +26,20 @@ class Pedido
 		$req->bindValue(':idProducto', $this->idProducto, PDO::PARAM_INT);
 		$req->bindValue(':nombreCliente', $this->cliente, PDO::PARAM_STR);
 		$req->bindValue(':minutos', $this->minutos, PDO::PARAM_INT);
-		$req->bindValue(':foto', $this->foto, PDO::PARAM_STR);
 		$req->execute();
 
 		return $objAccesoDatos->ObtenerUltimoId();
+	}
+
+	public static function AgregarUriFoto($id, $uri)
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+		$req = $objAccesoDatos->PrepararConsulta("UPDATE pedidos SET foto=:uri WHERE id=:id");
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+		$req->bindValue(':uri', $uri, PDO::PARAM_STR);
+		$req->execute();
+
+        return $objAccesoDatos->ObtenerUltimoId();
 	}
 
 	public static function TraerTodos()
