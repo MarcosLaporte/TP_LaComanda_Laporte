@@ -129,6 +129,9 @@ class PedidoController extends Pedido implements IPdo
 				if (ProductoPedido::CantPendientes($idPedido) == 0) {
 					Pedido::PedidoListo($idPedido);
 					$payload = json_encode(array("msg" => "Pedido #{$idPedido} listo para servir!"));
+					
+					$pedido = Pedido::TraerPorId($idPedido)[0];
+					Mesa::ModificarEstado($pedido->idMesa, MESA_COMIENDO);
 				}
 			} else {
 				$payload = json_encode(array("msg" => "Pedido #{$idPedido} no tiene asignado '{$producto[0]->descripcion}'"));
