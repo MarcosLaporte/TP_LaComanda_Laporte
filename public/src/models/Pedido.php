@@ -13,16 +13,18 @@ class Pedido
 	public $precio;
 	public $minutos;
 	public $foto;
+	public $activo;
 
 	public function CrearPedido()
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
 
-		$req = $objAccesoDatos->PrepararConsulta("INSERT INTO pedidos (id, idMesa, estado, precio) " .
-			"VALUES (:id, :idMesa, 0, :precio)");
+		$req = $objAccesoDatos->PrepararConsulta("INSERT INTO pedidos (id, idMesa, estado, precio, activo) " .
+			"VALUES (:id, :idMesa, 0, :precio, :activo)");
 		$req->bindValue(':id', $this->id, PDO::PARAM_STR);
 		$req->bindValue(':idMesa', $this->idMesa, PDO::PARAM_INT);
 		$req->bindValue(':precio', $this->precio, PDO::PARAM_STR);
+		$req->bindValue(':activo', true, PDO::PARAM_BOOL);
 		$req->execute();
 
 		return $objAccesoDatos->ObtenerUltimoId();

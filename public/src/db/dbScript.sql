@@ -51,6 +51,7 @@ CREATE TABLE pedidos(
 	precio FLOAT,
 	minutos INT,
 	foto VARCHAR(250),
+	activo BOOLEAN,
 	CONSTRAINT `estadoPed_check` CHECK (estado IN (0, 1)),
 	CONSTRAINT `precioPed_check` CHECK (precio > 0),
 	CONSTRAINT `idMesaPedFK` FOREIGN KEY (idMesa) REFERENCES mesas (id)

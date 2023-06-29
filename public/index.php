@@ -68,7 +68,7 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
 	$group->get('/{id}', \PedidoController::class . ':GetOne');
 	$group->put('/mins', \PedidoController::class . ':MinutesLeft')->add(new MwRolHabilitado())->add(new MwIdProducto())->add(new MwIdPedido())->add(new MwDuracion());
 	$group->put('/listo', \PedidoController::class . ':Modify')->add(new MwRolHabilitado())->add(new MwIdPedido())->add(new MwEsEmpleado());
-});
+})->add(new MwPedidoActivo());
 
 $app->group('/encuestas', function (RouteCollectorProxy $group) {
 	$group->post('[/]', \EncuestaController::class . ':Add')->add(new MwEncuesta())->add(new MwIdMesa())->add(new MwIdPedido());
