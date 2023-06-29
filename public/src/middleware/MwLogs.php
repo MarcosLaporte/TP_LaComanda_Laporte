@@ -5,7 +5,7 @@ use Slim\Psr7\Response;
 
 include_once __DIR__ . "\..\models\AutentificadorJWT.php";
 
-class MwSocio
+class MwEsSocio
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
@@ -16,7 +16,7 @@ class MwSocio
 			try {
 				AutentificadorJWT::VerificarToken($token);
 				$dataJWT = AutentificadorJWT::ObtenerData($token);
-				if ($dataJWT->rol == "socio") {
+				if (!strcasecmp($dataJWT->rol, "socio")) {
 					$response = $handler->handle($request);
 				} else {
 					$response->getBody()->write(json_encode(array("msg" => "Solo los socios pueden realizar esta accion!")));
@@ -32,7 +32,7 @@ class MwSocio
 	}
 }
 
-class MwMozo
+class MwEsMozo
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
@@ -43,7 +43,7 @@ class MwMozo
 			try {
 				AutentificadorJWT::VerificarToken($token);
 				$dataJWT = AutentificadorJWT::ObtenerData($token);
-				if ($dataJWT->rol == "mozo") {
+				if (!strcasecmp($dataJWT->rol, "mozo")) {
 					$response = $handler->handle($request);
 				} else {
 					$response->getBody()->write(json_encode(array("msg" => "Solo los mozos pueden realizar esta accion!")));
@@ -59,7 +59,7 @@ class MwMozo
 	}
 }
 
-class MwEmpleado
+class MwEsEmpleado
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
@@ -70,7 +70,6 @@ class MwEmpleado
 				AutentificadorJWT::VerificarToken($_COOKIE['token']);
 				$response = $handler->handle($request);
 			} catch (Exception $ex) {
-				$response->getBody()->write(json_encode(array("msg" => "Token invalido. Inicie sesion de nuevo.\n")));
 				$response->getBody()->write($ex->getMessage());
 			}
 		} else {

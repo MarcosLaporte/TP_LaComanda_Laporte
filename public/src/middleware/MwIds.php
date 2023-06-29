@@ -13,10 +13,10 @@ class MwIdMesa
 		if (isset($params['idMesa'])) {
 			$mesa = Mesa::TraerMesa($params['idMesa']);
 			if (!empty($mesa)) {
-				if ($mesa[0]->estado == MESA_ESPERANDO || $mesa[0]->estado == MESA_COMIENDO) {
+				if ($mesa[0]->estado == MESA_VACIA || $mesa[0]->estado == MESA_ESPERANDO || $mesa[0]->estado == MESA_COMIENDO) {
 					$response = $handler->handle($request);
 				} else {
-					$response->getBody()->write(json_encode(array("msg" => "La mesa no puede estar vacia, cerrada ni pagando!")));
+					$response->getBody()->write(json_encode(array("msg" => "La mesa no puede estar cerrada ni pagando!")));
 				}
 			} else {
 				$response->getBody()->write(json_encode(array("msg" => "Revise el ID de la mesa!")));
@@ -53,7 +53,7 @@ class MwIdPedido
 	}
 }
 
-class MwIdProd
+class MwIdProducto
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{

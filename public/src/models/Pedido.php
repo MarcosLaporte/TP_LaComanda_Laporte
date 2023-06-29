@@ -1,6 +1,7 @@
 <?php
 
 include_once "Producto.php";
+include_once __DIR__ . "\..\db\AccesoDatos.php";
 
 define('PEDIDO_PREPARACION', 0);
 define('PEDIDO_LISTO', 1);
@@ -8,24 +9,20 @@ class Pedido
 {
 	public $id;
 	public $idMesa;
-	public $idProducto;
 	public $estado;
-	public $cliente;
+	public $precio;
 	public $minutos;
 	public $foto;
 
 	public function CrearPedido()
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
-		$req = $objAccesoDatos->PrepararConsulta("INSERT INTO pedidos (id, idMesa, idProducto, estado, cliente, minutos, foto) " .
-			"VALUES (:id, :idMesa, :idProducto, 0, :nombreCliente, :minutos, 'N/A')");
 
-
+		$req = $objAccesoDatos->PrepararConsulta("INSERT INTO pedidos (id, idMesa, estado, precio) " .
+			"VALUES (:id, :idMesa, 0, :precio)");
 		$req->bindValue(':id', $this->id, PDO::PARAM_STR);
 		$req->bindValue(':idMesa', $this->idMesa, PDO::PARAM_INT);
-		$req->bindValue(':idProducto', $this->idProducto, PDO::PARAM_INT);
-		$req->bindValue(':nombreCliente', $this->cliente, PDO::PARAM_STR);
-		$req->bindValue(':minutos', $this->minutos, PDO::PARAM_INT);
+		$req->bindValue(':precio', $this->precio, PDO::PARAM_STR);
 		$req->execute();
 
 		return $objAccesoDatos->ObtenerUltimoId();
@@ -35,21 +32,38 @@ class Pedido
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
 		$req = $objAccesoDatos->PrepararConsulta("UPDATE pedidos SET foto=:uri WHERE id=:id");
-        $req->bindValue(':id', $id, PDO::PARAM_INT);
+		$req->bindValue(':id', $id, PDO::PARAM_INT);
 		$req->bindValue(':uri', $uri, PDO::PARAM_STR);
 		$req->execute();
 
-        return $objAccesoDatos->ObtenerUltimoId();
+		return $objAccesoDatos->ObtenerUltimoId();
+	}
+
+	public static function ModificarDuracion($id)
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+		$req = $objAccesoDatos->PrepararConsulta(
+		"UPDATE pedidos SET minutos = (
+			SELECT SUM(minutos)
+			FROM productos_pedidos
+			WHERE productos_pedidos.idPedido = pedidos.id
+		) WHERE id = :id;"
+		);
+
+		$req->bindValue(':id', $id, PDO::PARAM_STR);
+		$req->execute();
+
+		return $objAccesoDatos->ObtenerUltimoId();
 	}
 
 	public static function TraerTodos()
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
-		$req = $objAccesoDatos->PrepararConsulta("SELECT * from pedidos");
+		$req = $objAccesoDatos->PrepararConsulta("SELECT * FROM pedidos");
 		$req->execute();
 		return $req->fetchAll(PDO::FETCH_CLASS, 'Pedido');
 	}
-	
+
 	public static function TraerTodosId()
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
@@ -61,11 +75,23 @@ class Pedido
 	public static function TraerPorId($id)
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
-		$req = $objAccesoDatos->PrepararConsulta("SELECT * from pedidos WHERE id LIKE :id");
+		$req = $objAccesoDatos->PrepararConsulta("SELECT * FROM pedidos WHERE id=:id");
 		$req->bindValue(':id', $id, PDO::PARAM_STR);
 		$req->execute();
 
 		return $req->fetchAll(PDO::FETCH_CLASS, 'Pedido');
+	}
+
+	public static function IncrementarPrecio($id, $valor)
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+
+		$req = $objAccesoDatos->PrepararConsulta("UPDATE pedidos SET precio=precio+:valor WHERE id=:id");
+		$req->bindValue(':valor', $valor, PDO::PARAM_STR);
+		$req->bindValue(':id', $id, PDO::PARAM_STR);
+		$req->execute();
+
+		return $objAccesoDatos->ObtenerUltimoId();
 	}
 
 	public static function SectorYEmpleadoValido($sector, $rol)
@@ -80,10 +106,11 @@ class Pedido
 	public static function PedidoListo($id)
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+
 		$req = $objAccesoDatos->PrepararConsulta("UPDATE pedidos SET estado=1 WHERE id=:id");
-        $req->bindValue(':id', $id, PDO::PARAM_INT);
+		$req->bindValue(':id', $id, PDO::PARAM_STR);
 		$req->execute();
 
-        return $objAccesoDatos->ObtenerUltimoId();
+		return $objAccesoDatos->ObtenerUltimoId();
 	}
 }

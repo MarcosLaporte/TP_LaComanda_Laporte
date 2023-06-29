@@ -103,6 +103,31 @@ class MwFoto
 	}
 }
 
+class MwDuracion
+{
+	public function __invoke(Request $request, RequestHandler $handler): Response
+	{
+		$response = new Response();
+		$params = $request->getParsedBody();
+
+		if (isset($params['idProducto']) && isset($params['idPedido']) && isset($params['minutos'])) {
+			if (
+				!empty(intval($params['idProducto']))
+				&& !empty($params['idPedido'])
+				&& intval($params['minutos'] > 0)
+			) {
+				$response = $handler->handle($request);
+			} else {
+				$response->getBody()->write(json_encode(array("msg" => "Revise los datos ingresados!")));
+			}
+		} else {
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID del pedido y los minutos restantes para el pedido!")));
+		}
+
+		return $response;
+	}
+}
+
 class MwMesa
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response

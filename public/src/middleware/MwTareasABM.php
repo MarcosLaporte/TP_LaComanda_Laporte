@@ -46,17 +46,17 @@ class MwEstadoMesas
 	}
 }
 
-class MwEstadoPedido
+class MwRolHabilitado
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
 		$response = new Response();
 		$params = $request->getParsedBody();
 
-		if (isset($params['id'])) {
-			$pedido = Pedido::TraerPorId($params['id']);
+		if (isset($params['idPedido']) && isset($params['idProducto'])) {
+			$pedido = Pedido::TraerPorId($params['idPedido']);
 			if (!empty($pedido)) {
-				$producto = Producto::TraerPorId($pedido[0]->idProducto)[0];
+				$producto = Producto::TraerPorId($params['idProducto'])[0];
 				$token = $_COOKIE['token'];
 				try {
 					AutentificadorJWT::VerificarToken($token);
@@ -73,7 +73,7 @@ class MwEstadoPedido
 				$response->getBody()->write(json_encode(array("msg" => "No existe un pedido con ese ID.")));
 			}
 		} else {
-			$response->getBody()->write(json_encode(array("msg" => "ingrese el ID del pedido.")));
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID del pedido.")));
 		}
 
 		return $response;
