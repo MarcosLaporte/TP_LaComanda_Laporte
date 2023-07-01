@@ -10,25 +10,25 @@ use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
 use Slim\Routing\RouteContext;
 
-require __DIR__ . '\..\vendor\autoload.php';
+require(__DIR__ . '\..\vendor\autoload.php');
 
-include_once '.\src\controllers\UsuarioController.php';
-include_once '.\src\controllers\ProductoController.php';
-include_once '.\src\controllers\MesaController.php';
-include_once '.\src\controllers\PedidoController.php';
-include_once '.\src\controllers\ReciboController.php';
-include_once '.\src\controllers\EncuestaController.php';
+include_once(__DIR__ . '\src\controllers\UsuarioController.php');
+include_once(__DIR__ . '\src\controllers\ProductoController.php');
+include_once(__DIR__ . '\src\controllers\MesaController.php');
+include_once(__DIR__ . '\src\controllers\PedidoController.php');
+include_once(__DIR__ . '\src\controllers\ReciboController.php');
+include_once(__DIR__ . '\src\controllers\EncuestaController.php');
 
-include_once '.\src\middleware\MwParams.php';
-include_once '.\src\middleware\MwRolUsuario.php';
-include_once '.\src\middleware\MwCantSocios.php';
-include_once '.\src\middleware\MwSectorProducto.php';
-include_once '.\src\middleware\MwEstadoPedido.php';
-include_once '.\src\middleware\MwIds.php';
-include_once '.\src\middleware\MwTareasABM.php';
-include_once '.\src\middleware\MwDesactivarPedido.php';
-include_once '.\src\middleware\MwFormasDePago.php';
-include_once '.\src\middleware\MwLogs.php';
+include_once(__DIR__ . '\src\middleware\MwParams.php');
+include_once(__DIR__ . '\src\middleware\MwRolUsuario.php');
+include_once(__DIR__ . '\src\middleware\MwCantSocios.php');
+include_once(__DIR__ . '\src\middleware\MwSectorProducto.php');
+include_once(__DIR__ . '\src\middleware\MwEstadoPedido.php');
+include_once(__DIR__ . '\src\middleware\MwIds.php');
+include_once(__DIR__ . '\src\middleware\MwTareasABM.php');
+include_once(__DIR__ . '\src\middleware\MwDesactivarPedido.php');
+include_once(__DIR__ . '\src\middleware\MwFormasDePago.php');
+include_once(__DIR__ . '\src\middleware\MwLogs.php');
 
 // Instantiate App
 $app = AppFactory::create();

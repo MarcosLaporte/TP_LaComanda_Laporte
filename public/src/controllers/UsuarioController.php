@@ -2,10 +2,10 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-include_once __DIR__ . "\..\models\Usuario.php";
-include_once __DIR__ . "\..\models\AutentificadorJWT.php";
-include_once __DIR__ . "\..\db\AccesoDatos.php";
-include_once __DIR__ . "\..\interfaces\IPdo.php";
+include_once(__DIR__ . "\..\models\Usuario.php");
+include_once(__DIR__ . "\..\util\AutentificadorJWT.php");
+include_once(__DIR__ . "\..\db\AccesoDatos.php");
+include_once(__DIR__ . "\..\interfaces\IPdo.php");
 
 class UsuarioController extends Usuario implements IPdo
 {

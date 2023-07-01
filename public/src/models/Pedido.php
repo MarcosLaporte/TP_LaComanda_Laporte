@@ -1,7 +1,7 @@
 <?php
 
-include_once "Producto.php";
-include_once __DIR__ . "\..\db\AccesoDatos.php";
+include_once(__DIR__ . "Producto.php");
+include_once(__DIR__ . "\..\db\AccesoDatos.php");
 
 define('PEDIDO_PREPARACION', 0);
 define('PEDIDO_LISTO', 1);
@@ -47,7 +47,7 @@ class Pedido
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
 		$req = $objAccesoDatos->PrepararConsulta(
-		"UPDATE pedidos SET minutos = (
+			"UPDATE pedidos SET minutos = (
 			SELECT SUM(minutos)
 			FROM productos_pedidos
 			WHERE productos_pedidos.idPedido = pedidos.id

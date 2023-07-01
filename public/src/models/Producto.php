@@ -4,32 +4,34 @@ define('SECTOR_CERVEZAS', 2);
 define('SECTOR_COCINA', 3);
 define('SECTOR_CANDY', 4);
 
+include_once(__DIR__ . "\..\db\AccesoDatos.php");
+
 class Producto
 {
 	public $id;
-    public $sector;
-    public $descripcion;
-    public $precio;
+	public $sector;
+	public $descripcion;
+	public $precio;
 
 	public function CrearProducto()
-    {
-        $objAccesoDatos = AccesoDatos::ObtenerInstancia();
-        $req = $objAccesoDatos->PrepararConsulta("INSERT INTO productos (sector, descripcion, precio) VALUES (:sector,:descripcion,:precio)");
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+		$req = $objAccesoDatos->PrepararConsulta("INSERT INTO productos (sector, descripcion, precio) VALUES (:sector,:descripcion,:precio)");
 
-        $req->bindValue(':sector', $this->sector, PDO::PARAM_INT);
-        $req->bindValue(':descripcion', $this->descripcion, PDO::PARAM_STR);
-        $req->bindValue(':precio', (string)$this->precio, PDO::PARAM_STR);
-        $req->execute();
+		$req->bindValue(':sector', $this->sector, PDO::PARAM_INT);
+		$req->bindValue(':descripcion', $this->descripcion, PDO::PARAM_STR);
+		$req->bindValue(':precio', (string) $this->precio, PDO::PARAM_STR);
+		$req->execute();
 
-        return $objAccesoDatos->ObtenerUltimoId();
-    }
+		return $objAccesoDatos->ObtenerUltimoId();
+	}
 
 	public static function TraerTodos()
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
-        $req = $objAccesoDatos->PrepararConsulta("SELECT * FROM productos");
-        $req->execute();
-        return $req->fetchAll(PDO::FETCH_CLASS, 'Producto');
+		$req = $objAccesoDatos->PrepararConsulta("SELECT * FROM productos");
+		$req->execute();
+		return $req->fetchAll(PDO::FETCH_CLASS, 'Producto');
 	}
 
 	public static function TraerTodosId()
@@ -73,7 +75,7 @@ class Producto
 
 		return $datos;
 	}
-	
+
 	public static function SubirDatosCsv()
 	{
 		$archivo = Archivo::GuardarArchivoPeticion("src/db/", "productos", 'csv', '.csv');
@@ -84,10 +86,10 @@ class Producto
 			}
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public static function DbToCsv($rutaArchivo)
 	{
 		$productos = self::TraerTodos();

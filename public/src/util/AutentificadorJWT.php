@@ -17,7 +17,7 @@ class AutentificadorJWT
 			'data' => $datos,
 			'app' => "Laporte"
 		);
-		
+
 		return JWT::encode($payload, self::$claveSecreta, self::$tipoEncriptacion[0]);
 	}
 

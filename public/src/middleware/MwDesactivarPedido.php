@@ -3,8 +3,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
 
-include_once __DIR__ . "\..\models\Pedido.php";
-include_once __DIR__ . "\..\models\Recibo.php";
+include_once(__DIR__ . "\..\models\Pedido.php");
+include_once(__DIR__ . "\..\models\Recibo.php");
 
 class MwDesactivarPedido
 {
@@ -15,7 +15,7 @@ class MwDesactivarPedido
 		if ($response->getStatusCode() == 200) {
 			$params = $request->getParsedBody();
 			$recibo = Recibo::TraerPorId($params['numeroPedido'])[0];
-			
+
 			$idPedido = $recibo->idPedido;
 			Pedido::PedidoPago($idPedido);
 

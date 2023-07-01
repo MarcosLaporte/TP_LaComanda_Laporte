@@ -2,13 +2,13 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-include_once __DIR__ . "\..\models\Producto.php";
-include_once __DIR__ . "\..\models\Pedido.php";
-include_once __DIR__ . "\..\models\ProductoPedido.php";
-include_once __DIR__ . "\..\models\Mesa.php";
-include_once __DIR__ . "\..\util\AutentificadorJWT.php";
-include_once __DIR__ . "\..\util\Archivos.php";
-include_once __DIR__ . "\..\interfaces\IPdo.php";
+include_once(__DIR__ . "\..\models\Producto.php");
+include_once(__DIR__ . "\..\models\Pedido.php");
+include_once(__DIR__ . "\..\models\ProductoPedido.php");
+include_once(__DIR__ . "\..\models\Mesa.php");
+include_once(__DIR__ . "\..\util\AutentificadorJWT.php");
+include_once(__DIR__ . "\..\util\Archivos.php");
+include_once(__DIR__ . "\..\interfaces\IPdo.php");
 
 class PedidoController extends Pedido implements IPdo
 {
@@ -93,7 +93,7 @@ class PedidoController extends Pedido implements IPdo
 	{
 		$token = $_COOKIE['token'];
 		$dataJWT = AutentificadorJWT::ObtenerData($token);
-		
+
 		switch ($dataJWT->rol) {
 			case "socio":
 			case "mozo":
@@ -116,13 +116,13 @@ class PedidoController extends Pedido implements IPdo
 				$pedidos = array();
 				break;
 		}
-		
+
 		$payload = json_encode(array("list" => $pedidos));
 		$response->getBody()->write($payload);
 
 		return $response->withHeader('Content-Type', 'application/json');
 	}
-	
+
 	public static function GetOne(Request $request, Response $response, array $args)
 	{
 		$pedido = Pedido::TraerPorId($args['id']);
@@ -158,7 +158,7 @@ class PedidoController extends Pedido implements IPdo
 					Pedido::ModificarEstado($idPedido, PEDIDO_LISTO);
 					Pedido::ModificarDuracion($idPedido, 0);
 					$payload = json_encode(array("msg" => "Pedido #{$idPedido} listo para servir!"));
-					
+
 					$pedido = Pedido::TraerPorId($idPedido)[0];
 					Mesa::ModificarEstado($pedido->idMesa, MESA_COMIENDO);
 				}

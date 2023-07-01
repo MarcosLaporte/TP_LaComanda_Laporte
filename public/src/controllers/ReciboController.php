@@ -2,9 +2,9 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-include_once __DIR__ . "\..\models\Recibo.php";
-include_once __DIR__ . "\..\models\Pedido.php";
-include_once __DIR__ . "\..\models\Mesa.php";
+include_once(__DIR__ . "\..\models\Recibo.php");
+include_once(__DIR__ . "\..\models\Pedido.php");
+include_once(__DIR__ . "\..\models\Mesa.php");
 
 class ReciboController extends Recibo
 {
@@ -37,7 +37,7 @@ class ReciboController extends Recibo
 		setcookie($cookieMesa, " ", time() - 3600, "/", "localhost", false, true);
 		$payload = json_encode(array("msg" => "Cuenta pagada. Muchas gracias!"));
 		$response->getBody()->write($payload);
-		
+
 		Mesa::ModificarEstado($pedido->idMesa, MESA_VACIA);
 		self::DownloadPDF($params['numeroRecibo']);
 		return $response->withHeader('Content-Type', 'application/json');
@@ -49,7 +49,7 @@ class ReciboController extends Recibo
 		$objPdf = $recibo->CrearPdf();
 		$objPdf->Output();
 	}
-	
+
 	private static function DownloadPDF($numeroRecibo)
 	{
 		$recibo = Recibo::TraerPorId($numeroRecibo)[0];

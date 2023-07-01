@@ -3,14 +3,14 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
 
-include_once __DIR__ . "\..\models\AutentificadorJWT.php";
+include_once(__DIR__ . "\..\util\AutentificadorJWT.php");
 
 class MwEsSocio
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
 		$response = new Response();
-		
+
 		if (isset($_COOKIE['token'])) {
 			$token = $_COOKIE['token'];
 			try {
@@ -37,7 +37,7 @@ class MwEsMozo
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
 		$response = new Response();
-		
+
 		if (isset($_COOKIE['token'])) {
 			$token = $_COOKIE['token'];
 			try {
@@ -64,7 +64,7 @@ class MwEsEmpleado
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
 		$response = new Response();
-		
+
 		if (isset($_COOKIE['token'])) {
 			try {
 				AutentificadorJWT::VerificarToken($_COOKIE['token']);

@@ -3,9 +3,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
 
-include_once __DIR__ . "\..\models\Mesa.php";
-include_once __DIR__ . "\..\models\Pedido.php";
-include_once __DIR__ . "\..\util\AutentificadorJWT.php";
+include_once(__DIR__ . "\..\models\Mesa.php");
+include_once(__DIR__ . "\..\models\Pedido.php");
+include_once(__DIR__ . "\..\util\AutentificadorJWT.php");
 
 class MwEstadoMesas
 {

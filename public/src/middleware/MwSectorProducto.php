@@ -10,8 +10,8 @@ class MwSectoresProductos
 		$response = new Response();
 		$params = $request->getParsedBody();
 
-		if(isset($params['sector'])){
-			if(intval($params['sector']) >= 1 && intval($params['sector']) <= 4) {
+		if (isset($params['sector'])) {
+			if (intval($params['sector']) >= 1 && intval($params['sector']) <= 4) {
 				$response = $handler->handle($request);
 			} else {
 				$response->getBody()->write(json_encode(array("msg" => "Revise el sector de producto ingresado! (1-4)")));
