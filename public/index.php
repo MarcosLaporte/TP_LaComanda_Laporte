@@ -72,7 +72,13 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
 	$group->get('/{id}', \PedidoController::class . ':GetOne');
 	$group->put('/mins', \PedidoController::class . ':MinutesLeft')->add(new MwRolHabilitado())->add(new MwIdProducto())->add(new MwPedidoActivo())->add(new MwIdPedido())->add(new MwDuracion());
 	$group->put('/listo', \PedidoController::class . ':Modify')->add(new MwRolHabilitado())->add(new MwPedidoActivo())->add(new MwIdPedido())->add(new MwEsEmpleado());
-	$group->post('/cuenta', \ReciboController::class . ':Add')->add(new MwDesactivarPedido())->add(new MwMesaComiendo())->add(new MwPedidoActivo())->add(new MwIdPedido())->add(new MwFormasDePago())->add(new MwRecibo())->add(new MwEsMozo());
+	$group->post('/cuenta', \ReciboController::class . ':Add')->add(new MwDesactivarPedido())
+		->add(new MwMesaComiendo())
+		->add(new MwPedidoActivo())
+		->add(new MwIdPedido())
+		->add(new MwFormasDePago())
+		->add(new MwRecibo())
+		->add(new MwEsMozo());
 	$group->post('/pagar', \ReciboController::class . ':Pay')->add(new MwIdRecibo());
 });
 

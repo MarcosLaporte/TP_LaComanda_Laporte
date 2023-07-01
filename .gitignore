@@ -2,6 +2,7 @@
 .env
 *.jpg
 *.png
+*.csv
 /.vs
 /public/src/FotosMesas/
 /public/src/Recibos/
