@@ -6,7 +6,8 @@ include_once __DIR__ . "\..\models\Producto.php";
 include_once __DIR__ . "\..\models\Pedido.php";
 include_once __DIR__ . "\..\models\ProductoPedido.php";
 include_once __DIR__ . "\..\models\Mesa.php";
-include_once __DIR__ . "\..\models\Archivos.php";
+include_once __DIR__ . "\..\util\AutentificadorJWT.php";
+include_once __DIR__ . "\..\util\Archivos.php";
 include_once __DIR__ . "\..\interfaces\IPdo.php";
 
 class PedidoController extends Pedido implements IPdo
@@ -23,11 +24,12 @@ class PedidoController extends Pedido implements IPdo
 			$pedido->id = substr(uniqid(), -5);
 			$pedido->idMesa = $params['idMesa'];
 			$pedido->precio = floatval($producto->precio);
+			$pedido->fecha = date('Y-m-d');
 			$pedido->estado = PEDIDO_PREPARACION;
 			$pedido->CrearPedido();
 
 			$idPedido = $pedido->id;
-			$jwtMesa = AutentificadorJWT::CrearToken(array('idPedido' => $idPedido, 'fecha' => date('Y-m-d'), 'hora' => date('H:i:s')));
+			$jwtMesa = AutentificadorJWT::CrearToken(array('idPedido' => $idPedido, 'fecha' => $pedido->fecha, 'hora' => date('H:i:s')));
 			setcookie($nombreCookie, $jwtMesa, 0, '/', "localhost", false, true);
 		} else {
 			$jwtMesa = AutentificadorJWT::ObtenerData($_COOKIE[$nombreCookie]);
@@ -37,6 +39,7 @@ class PedidoController extends Pedido implements IPdo
 
 		self::AddProducto($params['idProducto'], $pedido->idMesa, $pedido->id, $params['cliente']);
 		Mesa::ModificarEstado($pedido->idMesa, MESA_ESPERANDO);
+		Pedido::ModificarEstado($pedido->id, PEDIDO_PREPARACION);
 
 		$payload = json_encode(array("msg" => "Pedido creado con exito"));
 		$response->getBody()->write($payload);
@@ -76,7 +79,7 @@ class PedidoController extends Pedido implements IPdo
 
 		if (!empty($pedido)) {
 			ProductoPedido::ModificarDuracion($params['idProducto'], $params['idPedido'], $params['minutos']);
-			Pedido::ModificarDuracion($params['idPedido']);
+			Pedido::ActualizarDuracion($params['idPedido']);
 			$payload = json_encode(array("msg" => "'{$producto[0]->descripcion}' de Pedido #{$params['idPedido']}: {$params['minutos']} minutos restantes."));
 		} else {
 			$payload = json_encode(array("msg" => "No existe un pedido con ese ID!"));
@@ -124,10 +127,12 @@ class PedidoController extends Pedido implements IPdo
 
 			if ($productoExisteEnPedido) {
 				ProductoPedido::ProductoListo($idProducto, $idPedido);
+				Pedido::ActualizarDuracion($idPedido);
 				$payload = json_encode(array("msg" => "'{$producto[0]->descripcion}' de Pedido #{$idPedido}: LISTO"));
 
 				if (ProductoPedido::CantPendientes($idPedido) == 0) {
-					Pedido::PedidoListo($idPedido);
+					Pedido::ModificarEstado($idPedido, PEDIDO_LISTO);
+					Pedido::ModificarDuracion($idPedido, 0);
 					$payload = json_encode(array("msg" => "Pedido #{$idPedido} listo para servir!"));
 					
 					$pedido = Pedido::TraerPorId($idPedido)[0];

@@ -14,9 +14,10 @@ CREATE TABLE usuarios(
 ) AUTO_INCREMENT = 101;
 
 INSERT INTO usuarios(usuario, clave, rol) VALUES
-	('mozo1', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'mozo'),
-	('cocinero1', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'cocinero'),
-	('socio1', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'socio');
+	('Frank', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'socio'),
+	('Max', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'mozo'),
+	('Tom', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'cocinero'),
+	('John', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'bartender');
 /*-----------------------------------------------*/
 DROP TABLE IF EXISTS mesas;
 CREATE TABLE mesas(
@@ -49,6 +50,7 @@ CREATE TABLE pedidos(
 	idMesa INT,
 	estado INT,
 	precio FLOAT,
+	fecha VARCHAR(11),
 	minutos INT,
 	foto VARCHAR(250),
 	activo BOOLEAN,
@@ -64,7 +66,7 @@ CREATE TABLE productos_pedidos(
 	idPedido CHAR(5),
 	estado INT,
 	minutos INT,
-	cliente VARCHAR(250),
+	cliente VARCHAR(50),
 	CONSTRAINT `estadoProdPed_check` CHECK (estado IN (0, 1)),
 	CONSTRAINT `idProductoProdPedFK` FOREIGN KEY (idProducto) REFERENCES productos (id),
 	CONSTRAINT `idMesaProdPedFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
@@ -96,3 +98,17 @@ CREATE TABLE logs(
 	hora VARCHAR(11),
 	CONSTRAINT `idUserFK` FOREIGN KEY (idUser) REFERENCES usuarios (id)
 );
+/*-----------------------------------------------*/
+DROP TABLE IF EXISTS recibos;
+CREATE TABLE recibos(
+	numero INT PRIMARY KEY AUTO_INCREMENT,
+	fecha VARCHAR(11),
+	idPedido CHAR(5),
+	cliente VARCHAR(50),
+	formaDePago VARCHAR(25),
+	importe FLOAT,
+	CONSTRAINT `formaDePago_check` CHECK (
+		formaDePago IN ("efectivo", "transferencia", "debito", "credito")
+	),
+	CONSTRAINT `idPedidoRecFK` FOREIGN KEY (idPedido) REFERENCES pedidos (id)
+) AUTO_INCREMENT = 1000001;

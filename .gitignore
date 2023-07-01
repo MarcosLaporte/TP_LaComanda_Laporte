@@ -1,5 +1,8 @@
 /vendor
 .env
 .jpg
+.png
 /.vs
 /FotosMesas
+/pdf/font
+/pdf/makefont

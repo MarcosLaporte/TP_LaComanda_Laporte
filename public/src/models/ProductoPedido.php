@@ -34,6 +34,16 @@ class ProductoPedido
 
 		return $req->fetchAll(PDO::FETCH_CLASS, 'ProductoPedido');
 	}
+
+	public static function TraerProdPorPedido($idPedido)
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+		$req = $objAccesoDatos->PrepararConsulta("SELECT idProducto from productos_pedidos WHERE idPedido=:idPedido");
+		$req->bindValue(':idPedido', $idPedido, PDO::PARAM_STR);
+		$req->execute();
+
+		return $req->fetchAll(PDO::FETCH_COLUMN);
+	}
 	
 	public static function ModificarDuracion($idProducto, $idPedido, $duracion)
 	{
@@ -51,7 +61,7 @@ class ProductoPedido
 	public static function ProductoListo($idProducto, $idPedido)
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
-		$req = $objAccesoDatos->PrepararConsulta("UPDATE productos_pedidos SET estado=1 WHERE idProducto=:idProducto AND idPedido=:idPedido");
+		$req = $objAccesoDatos->PrepararConsulta("UPDATE productos_pedidos SET estado=1, minutos=0 WHERE idProducto=:idProducto AND idPedido=:idPedido");
         $req->bindValue(':idProducto', $idProducto, PDO::PARAM_INT);
 		$req->bindValue(':idPedido', $idPedido, PDO::PARAM_STR);
 		$req->execute();

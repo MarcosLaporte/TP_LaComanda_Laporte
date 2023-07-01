@@ -11,6 +11,7 @@ class Pedido
 	public $idMesa;
 	public $estado;
 	public $precio;
+	public $fecha;
 	public $minutos;
 	public $foto;
 	public $activo;
@@ -19,11 +20,12 @@ class Pedido
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
 
-		$req = $objAccesoDatos->PrepararConsulta("INSERT INTO pedidos (id, idMesa, estado, precio, activo) " .
-			"VALUES (:id, :idMesa, 0, :precio, :activo)");
+		$req = $objAccesoDatos->PrepararConsulta("INSERT INTO pedidos (id, idMesa, estado, precio, fecha, activo) " .
+			"VALUES (:id, :idMesa, 0, :precio, :fecha, :activo)");
 		$req->bindValue(':id', $this->id, PDO::PARAM_STR);
 		$req->bindValue(':idMesa', $this->idMesa, PDO::PARAM_INT);
 		$req->bindValue(':precio', $this->precio, PDO::PARAM_STR);
+		$req->bindValue(':fecha', $this->fecha, PDO::PARAM_STR);
 		$req->bindValue(':activo', true, PDO::PARAM_BOOL);
 		$req->execute();
 
@@ -41,7 +43,7 @@ class Pedido
 		return $objAccesoDatos->ObtenerUltimoId();
 	}
 
-	public static function ModificarDuracion($id)
+	public static function ActualizarDuracion($id)
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
 		$req = $objAccesoDatos->PrepararConsulta(
@@ -105,11 +107,35 @@ class Pedido
 		);
 	}
 
-	public static function PedidoListo($id)
+	public static function ModificarEstado($id, $estado)
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
 
-		$req = $objAccesoDatos->PrepararConsulta("UPDATE pedidos SET estado=1 WHERE id=:id");
+		$req = $objAccesoDatos->PrepararConsulta("UPDATE pedidos SET estado=:estado WHERE id=:id");
+		$req->bindValue(':estado', $estado, PDO::PARAM_INT);
+		$req->bindValue(':id', $id, PDO::PARAM_STR);
+		$req->execute();
+
+		return $objAccesoDatos->ObtenerUltimoId();
+	}
+
+	public static function ModificarDuracion($id, $minutos)
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+
+		$req = $objAccesoDatos->PrepararConsulta("UPDATE productos_pedidos SET minutos=:minutos WHERE idPedido=:id");
+		$req->bindValue(':minutos', $minutos, PDO::PARAM_INT);
+		$req->bindValue(':id', $id, PDO::PARAM_STR);
+		$req->execute();
+
+		return $objAccesoDatos->ObtenerUltimoId();
+	}
+
+	public static function PedidoPago($id)
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+
+		$req = $objAccesoDatos->PrepararConsulta("UPDATE pedidos SET activo=false WHERE id=:id");
 		$req->bindValue(':id', $id, PDO::PARAM_STR);
 		$req->execute();
 

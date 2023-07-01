@@ -5,6 +5,7 @@ use Slim\Psr7\Response;
 
 include_once __DIR__ . "\..\models\Mesa.php";
 include_once __DIR__ . "\..\models\Pedido.php";
+include_once __DIR__ . "\..\util\AutentificadorJWT.php";
 
 class MwEstadoMesas
 {
@@ -75,6 +76,30 @@ class MwRolHabilitado
 		} else {
 			$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID del pedido.")));
 		}
+
+		return $response;
+	}
+}
+
+class MwMesaComiendo
+{
+	public function __invoke(Request $request, RequestHandler $handler): Response
+	{
+		$response = new Response();
+		$params = $request->getParsedBody();
+
+		if (isset($params['idPedido'])) {
+			$pedido = Pedido::TraerPorId($params['idPedido'])[0];
+			$mesa = Mesa::TraerMesa($pedido->idMesa)[0];
+			if ($mesa->estado == MESA_COMIENDO) {
+				$response = $handler->handle($request);
+			} else {
+				$response->getBody()->write(json_encode(array("msg" => "La mesa debe estar comiendo para pedir la cuenta!")));
+			}
+		} else {
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID del pedido!")));
+		}
+
 
 		return $response;
 	}
