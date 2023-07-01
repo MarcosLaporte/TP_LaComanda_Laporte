@@ -62,6 +62,7 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
 	$group->post('[/]', \MesaController::class . ':Add')->add(new MwMesa())->add(new MwEsSocio());
 	$group->get('[/]', \MesaController::class . ':GetAll')->add(new MwEsEmpleado());
 	$group->put('/{id}', \MesaController::class . ':Modify')->add(new MwEstadoMesas())->add(new MwMesa())->add(new MwEsEmpleado());
+	$group->get('/mas', \PedidoController::class . ':GetTables')->add(new MwEsSocio());
 });
 
 $app->group('/pedidos', function (RouteCollectorProxy $group) {

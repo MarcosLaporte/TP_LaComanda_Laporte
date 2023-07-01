@@ -44,6 +44,18 @@ class ProductoPedido
 
 		return $req->fetchAll(PDO::FETCH_COLUMN);
 	}
+
+	public static function TraerPorSector($sector)
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+		$req = $objAccesoDatos->PrepararConsulta("SELECT pp.* FROM productos_pedidos pp " .
+		"JOIN productos p ON pp.idProducto = p.id " .
+		"WHERE pp.estado = 0 AND p.sector = :sector");
+		$req->bindValue(':sector', $sector, PDO::PARAM_INT);
+		$req->execute();
+		
+		return $req->fetchAll(PDO::FETCH_CLASS, 'ProductoPedido');
+	}
 	
 	public static function ModificarDuracion($idProducto, $idPedido, $duracion)
 	{

@@ -91,14 +91,38 @@ class PedidoController extends Pedido implements IPdo
 
 	public static function GetAll(Request $request, Response $response, array $args)
 	{
-		$pedidos = Pedido::TraerTodos();
-
+		$token = $_COOKIE['token'];
+		$dataJWT = AutentificadorJWT::ObtenerData($token);
+		
+		switch ($dataJWT->rol) {
+			case "socio":
+			case "mozo":
+				$pedidos = Pedido::TraerTodos();
+				break;
+			case "cocinero":
+				$pedidos = ProductoPedido::TraerPorSector(SECTOR_COCINA);
+				$candybar = ProductoPedido::TraerPorSector(SECTOR_CANDY);
+				foreach ($candybar as $postre) {
+					array_push($pedidos, $postre);
+				}
+				break;
+			case "cervecero":
+				$pedidos = ProductoPedido::TraerPorSector(SECTOR_CERVEZAS);
+				break;
+			case "bartender":
+				$pedidos = ProductoPedido::TraerPorSector(SECTOR_TRAGOS);
+				break;
+			default:
+				$pedidos = array();
+				break;
+		}
+		
 		$payload = json_encode(array("list" => $pedidos));
 		$response->getBody()->write($payload);
 
 		return $response->withHeader('Content-Type', 'application/json');
 	}
-
+	
 	public static function GetOne(Request $request, Response $response, array $args)
 	{
 		$pedido = Pedido::TraerPorId($args['id']);
@@ -148,5 +172,15 @@ class PedidoController extends Pedido implements IPdo
 
 		$response->getBody()->write($payload);
 		return $response->withHeader('Content-Type', 'application\json');
+	}
+
+	public static function GetTables(Request $request, Response $response, array $args)
+	{
+		$mesas = Pedido::TraerMesasMasUsadas();
+
+		$payload = json_encode(array("list" => $mesas));
+		$response->getBody()->write($payload);
+
+		return $response->withHeader('Content-Type', 'application/json');
 	}
 }
