@@ -4,32 +4,34 @@ define('SECTOR_CERVEZAS', 2);
 define('SECTOR_COCINA', 3);
 define('SECTOR_CANDY', 4);
 
+include_once(__DIR__ . "\..\db\AccesoDatos.php");
+
 class Producto
 {
 	public $id;
-    public $sector;
-    public $descripcion;
-    public $precio;
+	public $sector;
+	public $descripcion;
+	public $precio;
 
 	public function CrearProducto()
-    {
-        $objAccesoDatos = AccesoDatos::ObtenerInstancia();
-        $req = $objAccesoDatos->PrepararConsulta("INSERT INTO productos (sector, descripcion, precio) VALUES (:sector,:descripcion,:precio)");
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+		$req = $objAccesoDatos->PrepararConsulta("INSERT INTO productos (sector, descripcion, precio) VALUES (:sector,:descripcion,:precio)");
 
-        $req->bindValue(':sector', $this->sector, PDO::PARAM_INT);
-        $req->bindValue(':descripcion', $this->descripcion, PDO::PARAM_STR);
-        $req->bindValue(':precio', (string)$this->precio, PDO::PARAM_STR);
-        $req->execute();
+		$req->bindValue(':sector', $this->sector, PDO::PARAM_INT);
+		$req->bindValue(':descripcion', $this->descripcion, PDO::PARAM_STR);
+		$req->bindValue(':precio', (string) $this->precio, PDO::PARAM_STR);
+		$req->execute();
 
-        return $objAccesoDatos->ObtenerUltimoId();
-    }
+		return $objAccesoDatos->ObtenerUltimoId();
+	}
 
 	public static function TraerTodos()
 	{
 		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
-        $req = $objAccesoDatos->PrepararConsulta("SELECT * FROM productos");
-        $req->execute();
-        return $req->fetchAll(PDO::FETCH_CLASS, 'Producto');
+		$req = $objAccesoDatos->PrepararConsulta("SELECT * FROM productos");
+		$req->execute();
+		return $req->fetchAll(PDO::FETCH_CLASS, 'Producto');
 	}
 
 	public static function TraerTodosId()
@@ -50,7 +52,7 @@ class Producto
 		return $req->fetchAll(PDO::FETCH_CLASS, 'Producto');
 	}
 
-	private static function CsvToProducto($rutaArchivo)
+	public static function CsvToProducto($rutaArchivo)
 	{
 		$refArchivo = fopen($rutaArchivo, "r");
 		$arrayAtr = array();
@@ -61,6 +63,7 @@ class Producto
 				$arrayAtr = fgetcsv($refArchivo);
 				if (!empty($arrayAtr)) {
 					$producto = new Producto();
+					$producto->id = intval($arrayAtr[0]);
 					$producto->sector = intval($arrayAtr[1]);
 					$producto->descripcion = str_ireplace("_", ",", $arrayAtr[2]);
 					$producto->precio = doubleval($arrayAtr[3]);
@@ -72,19 +75,21 @@ class Producto
 
 		return $datos;
 	}
-	
+
 	public static function SubirDatosCsv()
 	{
-		$archivo = Archivo::GuardarArchivoPeticion("src/csv/", "productos", 'csv', '.csv');
+		$archivo = Archivo::GuardarArchivoPeticion("src/db/", "productos", 'csv', '.csv');
 		if ($archivo != "N/A") {
 			$arrayProd = self::CsvToProducto($archivo);
 			foreach ($arrayProd as $producto) {
 				$producto->CrearProducto();
 			}
 			return true;
-		} else return false;
+		}
+
+		return false;
 	}
-	
+
 	public static function DbToCsv($rutaArchivo)
 	{
 		$productos = self::TraerTodos();
@@ -92,14 +97,17 @@ class Producto
 		if (!empty($productos)) {
 			$refArchivo = fopen($rutaArchivo, "w");
 			if ($refArchivo) {
+				$arrayCsv = array();
 				foreach ($productos as $producto) {
 					$producto->descripcion = str_ireplace(",", "_", $producto->descripcion);
 					$attr = get_object_vars($producto);
 					$strProd = implode(',', $attr) . PHP_EOL;
 
 					fwrite($refArchivo, $strProd);
+					array_push($arrayCsv, $strProd);
 				}
-				return fclose($refArchivo);
+				fclose($refArchivo);
+				return $arrayCsv;
 			}
 		}
 

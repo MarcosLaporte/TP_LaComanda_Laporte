@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . "\..\db\AccesoDatos.php");
 
 class Encuesta
 {

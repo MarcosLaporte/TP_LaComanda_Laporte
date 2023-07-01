@@ -5,35 +5,37 @@ USE comanda_laporte;
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	usuario VARCHAR(50) NOT NULL,
-	clave VARCHAR(250) NOT NULL,
-	rol VARCHAR(13) NOT NULL,
+	usuario VARCHAR(50),
+	clave VARCHAR(250),
+	rol VARCHAR(13),
 	CONSTRAINT `rol_check` CHECK (
 		rol IN ('bartender', 'cervecero', 'cocinero', 'mozo', 'socio')
 	)
 ) AUTO_INCREMENT = 101;
 
 INSERT INTO usuarios(usuario, clave, rol) VALUES
+	('Frank', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'socio'),
 	('Max', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'mozo'),
-	('John', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'cocinero'),
-	('Tom', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'socio');
+	('Tom', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'cocinero'),
+	('John', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'bartender');
 /*-----------------------------------------------*/
 DROP TABLE IF EXISTS mesas;
 CREATE TABLE mesas(
 	id INT(5) PRIMARY KEY AUTO_INCREMENT,
-	estado INT NOT NULL,
-	CONSTRAINT `estadoMesa_check` CHECK (estado BETWEEN 1 AND 4)
+	estado INT,
+	CONSTRAINT `estadoMesa_check` CHECK (estado BETWEEN 0 AND 4)
 	) AUTO_INCREMENT = 1;
 	
-INSERT INTO mesas(estado) VALUES (1),(1),(3),(4);
+INSERT INTO mesas(estado) VALUES (0),(0),(0),(0),(0);
 /*-----------------------------------------------*/
 DROP TABLE IF EXISTS productos;
 CREATE TABLE productos(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	sector INT NOT NULL,
-	descripcion VARCHAR(250) NOT NULL,
-	precio FLOAT NOT NULL,
-	CONSTRAINT `sector_check` CHECK (sector BETWEEN 1 AND 4)
+	sector INT,
+	descripcion VARCHAR(250),
+	precio FLOAT,
+	CONSTRAINT `sector_check` CHECK (sector BETWEEN 1 AND 4),
+	CONSTRAINT `precio_check` CHECK (precio > 0)
 	) AUTO_INCREMENT = 101;
 	
 INSERT INTO productos(sector, descripcion, precio) VALUES 
@@ -45,27 +47,42 @@ INSERT INTO productos(sector, descripcion, precio) VALUES
 DROP TABLE IF EXISTS pedidos;
 CREATE TABLE pedidos(
 	id CHAR(5) PRIMARY KEY,
-	idMesa INT NOT NULL,
-	idProducto INT NOT NULL,
-	estado INT NOT NULL,
-	cliente VARCHAR(250) NOT NULL,
-	minutos INT NOT NULL,
-	foto VARCHAR(250) NOT NULL,
-	CONSTRAINT `estadoPedido_check` CHECK (estado IN (0, 1)),
-	CONSTRAINT `idMesaPedFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
-	CONSTRAINT `idProductoPedFK` FOREIGN KEY (idProducto) REFERENCES productos (id)
+	idMesa INT,
+	estado INT,
+	precio FLOAT,
+	fecha VARCHAR(11),
+	minutos INT,
+	foto VARCHAR(250),
+	activo BOOLEAN,
+	CONSTRAINT `estadoPed_check` CHECK (estado IN (0, 1)),
+	CONSTRAINT `precioPed_check` CHECK (precio > 0),
+	CONSTRAINT `idMesaPedFK` FOREIGN KEY (idMesa) REFERENCES mesas (id)
+	);
+/*-----------------------------------------------*/
+DROP TABLE IF EXISTS productos_pedidos;
+CREATE TABLE productos_pedidos(
+	idProducto INT,
+	idMesa INT,
+	idPedido CHAR(5),
+	estado INT,
+	minutos INT,
+	cliente VARCHAR(50),
+	CONSTRAINT `estadoProdPed_check` CHECK (estado IN (0, 1)),
+	CONSTRAINT `idProductoProdPedFK` FOREIGN KEY (idProducto) REFERENCES productos (id),
+	CONSTRAINT `idMesaProdPedFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
+	CONSTRAINT `idPedidoProdPedFK` FOREIGN KEY (idPedido) REFERENCES pedidos (id)
 	);
 /*-----------------------------------------------*/
 DROP TABLE IF EXISTS encuestas;
 CREATE TABLE encuestas(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	idMesa INT NOT NULL,
-	idPedido CHAR(5) NOT NULL,
-	puntMesa INT NOT NULL,
-	puntRestaurante INT NOT NULL,
-	puntMozo INT NOT NULL,
-	puntCocina INT NOT NULL,
-	comentarios VARCHAR(66) NOT NULL,
+	idMesa INT,
+	idPedido CHAR(5),
+	puntMesa INT,
+	puntRestaurante INT,
+	puntMozo INT,
+	puntCocina INT,
+	comentarios VARCHAR(66),
 	CONSTRAINT `puntMesa_check` CHECK (puntMesa BETWEEN 1 AND 10),
 	CONSTRAINT `puntRestaurante_check` CHECK (puntRestaurante BETWEEN 1 AND 10),
 	CONSTRAINT `puntMozo_check` CHECK (puntMozo BETWEEN 1 AND 10),
@@ -76,8 +93,22 @@ CREATE TABLE encuestas(
 /*-----------------------------------------------*/
 DROP TABLE IF EXISTS logs;
 CREATE TABLE logs(
-	idUser INT NOT NULL,
+	idUser INT,
 	fecha VARCHAR(11),
 	hora VARCHAR(11),
 	CONSTRAINT `idUserFK` FOREIGN KEY (idUser) REFERENCES usuarios (id)
 );
+/*-----------------------------------------------*/
+DROP TABLE IF EXISTS recibos;
+CREATE TABLE recibos(
+	numero INT PRIMARY KEY AUTO_INCREMENT,
+	fecha VARCHAR(11),
+	idPedido CHAR(5),
+	cliente VARCHAR(50),
+	formaDePago VARCHAR(25),
+	importe FLOAT,
+	CONSTRAINT `formaDePago_check` CHECK (
+		formaDePago IN ("efectivo", "transferencia", "debito", "credito")
+	),
+	CONSTRAINT `idPedidoRecFK` FOREIGN KEY (idPedido) REFERENCES pedidos (id)
+) AUTO_INCREMENT = 1000001;

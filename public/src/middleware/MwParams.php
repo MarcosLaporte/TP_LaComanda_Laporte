@@ -78,6 +78,56 @@ class MwPedido
 	}
 }
 
+class MwFoto
+{
+	public function __invoke(Request $request, RequestHandler $handler): Response
+	{
+		$response = new Response();
+		$params = $request->getParsedBody();
+		$paramFiles = $request->getUploadedFiles();
+
+		if (isset($params['idPedido']) && isset($paramFiles['foto'])) {
+			if (
+				!empty($params['idPedido'])
+				&& $paramFiles['foto']->getError() == UPLOAD_ERR_OK
+			) {
+				$response = $handler->handle($request);
+			} else {
+				$response->getBody()->write(json_encode(array("msg" => "Revise los datos ingresados!")));
+			}
+		} else {
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID del pedido y la imagen!")));
+		}
+
+		return $response;
+	}
+}
+
+class MwDuracion
+{
+	public function __invoke(Request $request, RequestHandler $handler): Response
+	{
+		$response = new Response();
+		$params = $request->getParsedBody();
+
+		if (isset($params['idProducto']) && isset($params['idPedido']) && isset($params['minutos'])) {
+			if (
+				!empty(intval($params['idProducto']))
+				&& !empty($params['idPedido'])
+				&& intval($params['minutos'] > 0)
+			) {
+				$response = $handler->handle($request);
+			} else {
+				$response->getBody()->write(json_encode(array("msg" => "Revise los datos ingresados!")));
+			}
+		} else {
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID del pedido y los minutos restantes para el pedido!")));
+		}
+
+		return $response;
+	}
+}
+
 class MwMesa
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
@@ -86,7 +136,7 @@ class MwMesa
 		$params = $request->getParsedBody();
 
 		if (isset($params['estado'])) {
-			if (intval($params['estado']) >= 1 && intval($params['estado']) <= 4) {
+			if (intval($params['estado']) >= 0 && intval($params['estado']) <= 4) {
 				$response = $handler->handle($request);
 			} else {
 				$response->getBody()->write(json_encode(array("msg" => "Revise el estado de mesa ingresado! (1-4)")));
@@ -95,6 +145,31 @@ class MwMesa
 			$response->getBody()->write(json_encode(array("msg" => "Ingrese el estado de la mesa!")));
 		}
 
+
+		return $response;
+	}
+}
+
+class MwRecibo
+{
+	public function __invoke(Request $request, RequestHandler $handler): Response
+	{
+		$response = new Response();
+		$params = $request->getParsedBody();
+
+		if (isset($params['idPedido']) && isset($params['formaDePago']) && isset($params['cliente'])) {
+			if (
+				!empty($params['idPedido'])
+				&& !empty($params['formaDePago'])
+				&& !empty($params['cliente'])
+			) {
+				$response = $handler->handle($request);
+			} else {
+				$response->getBody()->write(json_encode(array("msg" => "Revise los datos ingresados!")));
+			}
+		} else {
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese los datos para el recibo!")));
+		}
 
 		return $response;
 	}

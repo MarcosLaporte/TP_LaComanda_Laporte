@@ -19,29 +19,18 @@
 							"formdata": [
 								{
 									"key": "idMesa",
-									"value": "10002",
-									"description": "idMesa\nidProducto\nestado\ncliente\nfoto",
+									"value": "",
 									"type": "text"
 								},
 								{
 									"key": "idProducto",
-									"value": "101",
+									"value": "",
 									"type": "text"
 								},
 								{
 									"key": "cliente",
-									"value": "Patricia",
+									"value": "",
 									"type": "text"
-								},
-								{
-									"key": "minutos",
-									"value": "5",
-									"type": "text"
-								},
-								{
-									"key": "foto",
-									"type": "file",
-									"src": "/C:/Users/Marco/OneDrive/Downloads/cliente.png"
 								}
 							]
 						},
@@ -66,8 +55,23 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "idPedido",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "idProducto",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:666/public/pedidos/201b8",
+							"raw": "http://localhost:666/public/pedidos/listo",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -76,7 +80,7 @@
 							"path": [
 								"public",
 								"pedidos",
-								"201b8"
+								"listo"
 							]
 						}
 					},
@@ -88,7 +92,42 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:666/public/pedidos/",
+							"raw": "http://localhost:666/public/pedidos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subir Foto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "idPedido",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "foto",
+									"type": "file",
+									"src": "mesa-restaurante.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/public/pedidos/foto",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -97,7 +136,120 @@
 							"path": [
 								"public",
 								"pedidos",
-								""
+								"foto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Minutos Pedido",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "idPedido",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "idProducto",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "minutos",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/public/pedidos/mins",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"pedidos",
+								"mins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cuenta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "idPedido",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "formaDePago",
+									"value": "debito",
+									"type": "text"
+								},
+								{
+									"key": "cliente",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/public/pedidos/cuenta",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"pedidos",
+								"cuenta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pagar cuenta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "numeroRecibo",
+									"value": "100000_",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/public/pedidos/pagar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"pedidos",
+								"pagar"
 							]
 						}
 					},
@@ -118,7 +270,7 @@
 							"formdata": [
 								{
 									"key": "usuario",
-									"value": "Pepe",
+									"value": "",
 									"type": "text"
 								},
 								{
@@ -128,7 +280,7 @@
 								},
 								{
 									"key": "rol",
-									"value": "cervecero",
+									"value": "",
 									"type": "text"
 								}
 							]
@@ -173,6 +325,306 @@
 			]
 		},
 		{
+			"name": "Encuestas",
+			"item": [
+				{
+					"name": "Alta Encuesta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "idMesa",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "idPedido",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "puntMesa",
+									"value": "6",
+									"type": "text"
+								},
+								{
+									"key": "puntResto",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "puntMozo",
+									"value": "7",
+									"type": "text"
+								},
+								{
+									"key": "puntCocina",
+									"value": "9",
+									"type": "text"
+								},
+								{
+									"key": "comentarios",
+									"value": "Re piola negri",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/public/encuestas/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"encuestas",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Encuestas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:666/public/encuestas/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"encuestas",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Productos",
+			"item": [
+				{
+					"name": "Alta Producto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "sector",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "descripcion",
+									"value": "Tinto Malbec",
+									"type": "text"
+								},
+								{
+									"key": "precio",
+									"value": "3000",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/public/productos/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"productos",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Productos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:666/public/productos/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"productos",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CSV",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "csv",
+									"type": "file",
+									"src": "nuevos_productos.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/public/productos/csv",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"productos",
+								"csv"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Mesas",
+			"item": [
+				{
+					"name": "Estado Mesa",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "estado",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/public/mesas/___ID_AQUÍ___",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"mesas",
+								"___ID_AQUÍ___"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Mesas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:666/public/mesas/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"mesas",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Alta Mesa",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "estado",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/public/mesas/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"mesas",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mesas más usadas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:666/public/mesas/mas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"mesas",
+								"mas"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "LogIn",
 			"request": {
 				"method": "POST",
@@ -187,7 +639,7 @@
 						},
 						{
 							"key": "usuario",
-							"value": "Max",
+							"value": "Frank",
 							"type": "text"
 						},
 						{
@@ -198,7 +650,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://localhost:666/public/login/",
+					"raw": "http://localhost:666/public/login",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -206,86 +658,7 @@
 					"port": "666",
 					"path": [
 						"public",
-						"login",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Traer Productos",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "sector",
-							"value": "1",
-							"type": "text"
-						},
-						{
-							"key": "descripcion",
-							"value": "Tinto Malbec",
-							"type": "text"
-						},
-						{
-							"key": "precio",
-							"value": "3000",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "http://localhost:666/public/productos/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "666",
-					"path": [
-						"public",
-						"productos",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Estado Mesa",
-			"request": {
-				"auth": {
-					"type": "bearer"
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "estado",
-							"value": "2",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "http://localhost:666/public/mesas/10002",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "666",
-					"path": [
-						"public",
-						"mesas",
-						"10002"
+						"login"
 					]
 				}
 			},

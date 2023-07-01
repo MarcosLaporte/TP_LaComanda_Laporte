@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__ . "\..\db\AccesoDatos.php";
+include_once(__DIR__ . "\..\db\AccesoDatos.php");
 
 class Usuario
 {

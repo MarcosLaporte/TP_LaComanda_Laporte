@@ -1,3 +1,10 @@
 /vendor
 .env
-.jpg
+*.jpg
+*.png
+*.csv
+/.vs
+/public/src/FotosMesas/
+/public/src/Recibos/
+/public/src/util/pdf/font/
+/public/src/util/pdf/makefont/
