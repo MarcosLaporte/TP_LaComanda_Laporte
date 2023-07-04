@@ -53,7 +53,22 @@ class UsuarioController extends Usuario implements IPdo
 
 	public static function Modify(Request $request, Response $response, array $args)
 	{
+		$params = $request->getParsedBody();
 
+		if (isset($params['estado']) && !empty($params['estado'])) {
+			if (intval($params['estado']) >= -1 && intval($params['estado']) <= 1) {
+				Usuario::ModificarEstado($params['idUsuario'], $params['estado']);
+				$estado = Usuario::ParseEstado($params['estado']);
+				$payload = json_encode(array("msg" => "Estado del Usuario #{$params['idUsuario']}: $estado."));
+			} else {
+				$payload = json_encode(array("msg" => "Ingrese un estado valido."));
+			}
+		} else {
+			$payload = json_encode(array("msg" => "Ingrese el estado del usuario."));
+		}
+
+		$response->getBody()->write($payload);
+		return $response->withHeader('Content-Type', 'application/json');
 	}
 
 	public static function Login(Request $request, Response $response, array $args)
@@ -67,11 +82,22 @@ class UsuarioController extends Usuario implements IPdo
 					!strcasecmp($params['usuario'], $usuario[0]->usuario)
 					&& password_verify($params['clave'], $usuario[0]->clave)
 				) {
-					$payload = json_encode(array('msg' => "OK", 'rol' => $usuario[0]->rol));
+					if ($usuario[0]->estado == USUARIO_ACTIVO) {
+						$payload = json_encode(array('msg' => "OK", 'rol' => $usuario[0]->rol));
 
-					$jwt = AutentificadorJWT::CrearToken(array('id' => $usuario[0]->id, 'rol' => $usuario[0]->rol, 'fecha' => date('Y-m-d'), 'hora' => date('H:i:s')));
-					setcookie("token", $jwt, time() + 1800, '/', "localhost", false, true);
-					self::AlmacenarLog($jwt);
+						$jwt = AutentificadorJWT::CrearToken(
+							array(
+								'id' => $usuario[0]->id,
+								'rol' => $usuario[0]->rol,
+								'fecha' => date('Y-m-d'),
+								'hora' => date('H:i:s')
+							)
+						);
+						setcookie("token", $jwt, time() + 1800, '/', "localhost", false, true);
+						self::AlmacenarLog($jwt);
+					} else {
+						$payload = json_encode(array('msg' => "El usuario no se encuentra activo."));
+					}
 				} else {
 					//Borra cookie existente
 					setcookie("token", " ", time() - 3600, "/", "localhost", false, true);
@@ -103,4 +129,5 @@ class UsuarioController extends Usuario implements IPdo
 			throw new Exception("Error al almacenar el log.");
 		}
 	}
+
 }

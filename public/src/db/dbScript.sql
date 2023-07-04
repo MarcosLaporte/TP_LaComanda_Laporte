@@ -8,23 +8,27 @@ CREATE TABLE usuarios(
 	usuario VARCHAR(50),
 	clave VARCHAR(250),
 	rol VARCHAR(13),
+	estado INT,
 	CONSTRAINT `rol_check` CHECK (
 		rol IN ('bartender', 'cervecero', 'cocinero', 'mozo', 'socio')
-	)
+	),
+	CONSTRAINT `estado_check` CHECK (estado BETWEEN -1 AND 1),
+	CONSTRAINT `estadoUserFK` FOREIGN KEY (estado) REFERENCES estados_user (id)
 ) AUTO_INCREMENT = 101;
 
-INSERT INTO usuarios(usuario, clave, rol) VALUES
-	('Frank', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'socio'),
-	('Max', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'mozo'),
-	('Tom', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'cocinero'),
-	('John', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'bartender');
+INSERT INTO usuarios(usuario, clave, rol, estado) VALUES
+	('Frank', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'socio', 1),
+	('Max', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'mozo', 1),
+	('Tom', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'cocinero', 1),
+	('John', '$2y$10$.RLc7btiUb4zFHku4QV8ZuM0AQK9oMI7EdRqcQDzAFF56t0W7yNY2', 'bartender', 1);
 /*-----------------------------------------------*/
 DROP TABLE IF EXISTS mesas;
 CREATE TABLE mesas(
 	id INT(5) PRIMARY KEY AUTO_INCREMENT,
 	estado INT,
-	CONSTRAINT `estadoMesa_check` CHECK (estado BETWEEN 0 AND 4)
-	) AUTO_INCREMENT = 1;
+	CONSTRAINT `estadoMesa_check` CHECK (estado BETWEEN 0 AND 4),
+	CONSTRAINT `estadoMesaFK` FOREIGN KEY (estado) REFERENCES estados_mesas (id)
+) AUTO_INCREMENT = 1;
 	
 INSERT INTO mesas(estado) VALUES (0),(0),(0),(0),(0);
 /*-----------------------------------------------*/
@@ -35,8 +39,9 @@ CREATE TABLE productos(
 	descripcion VARCHAR(250),
 	precio FLOAT,
 	CONSTRAINT `sector_check` CHECK (sector BETWEEN 1 AND 4),
-	CONSTRAINT `precio_check` CHECK (precio > 0)
-	) AUTO_INCREMENT = 101;
+	CONSTRAINT `precio_check` CHECK (precio > 0),
+	CONSTRAINT `sectorProdFK` FOREIGN KEY (sector) REFERENCES sectores_productos (id)
+) AUTO_INCREMENT = 101;
 	
 INSERT INTO productos(sector, descripcion, precio) VALUES 
 	(2, 'Amstel Lager 750ml', 1449.99),
@@ -56,7 +61,8 @@ CREATE TABLE pedidos(
 	activo BOOLEAN,
 	CONSTRAINT `estadoPed_check` CHECK (estado IN (0, 1)),
 	CONSTRAINT `precioPed_check` CHECK (precio > 0),
-	CONSTRAINT `idMesaPedFK` FOREIGN KEY (idMesa) REFERENCES mesas (id)
+	CONSTRAINT `idMesaPedFK` FOREIGN KEY (idMesa) REFERENCES mesas (id),
+	CONSTRAINT `estadoPedFK` FOREIGN KEY (estado) REFERENCES estados_pedidos (id)
 	);
 /*-----------------------------------------------*/
 DROP TABLE IF EXISTS productos_pedidos;
@@ -112,3 +118,51 @@ CREATE TABLE recibos(
 	),
 	CONSTRAINT `idPedidoRecFK` FOREIGN KEY (idPedido) REFERENCES pedidos (id)
 ) AUTO_INCREMENT = 1000001;
+/*-----------------------------------------------*/
+/*-----------------------------------------------*/
+/*-----------------------------------------------*/
+DROP TABLE IF EXISTS estados_user;
+CREATE TABLE estados_user(
+	id INT PRIMARY KEY,
+	descripcion VARCHAR(50) NOT NULL
+);
+
+INSERT INTO estados_user(id, descripcion) VALUES
+	(-1, "SUSPENDIDO"),
+	(0, "INACTIVO"),
+	(1, "ACTIVO");
+/*-----------------------------------------------*/
+DROP TABLE IF EXISTS estados_mesas;
+CREATE TABLE estados_mesas(
+	id INT PRIMARY KEY,
+	descripcion VARCHAR(50) NOT NULL
+);
+
+INSERT INTO estados_mesas(id, descripcion) VALUES
+	(0, "VACIA"),
+	(1, "ESPERANDO"),
+	(2, "COMIENDO"),
+	(3, "PAGANDO"),
+	(4, "CERRADA");
+/*-----------------------------------------------*/
+DROP TABLE IF EXISTS sectores_productos;
+CREATE TABLE sectores_productos(
+	id INT PRIMARY KEY,
+	descripcion VARCHAR(50) NOT NULL
+);
+
+INSERT INTO sectores_productos(id, descripcion) VALUES
+	(1, "TRAGOS"),
+	(2, "CERVEZAS"),
+	(3, "COCINA"),
+	(4, "CANDY");
+/*-----------------------------------------------*/
+DROP TABLE IF EXISTS estados_pedidos;
+CREATE TABLE estados_pedidos(
+	id INT PRIMARY KEY,
+	descripcion VARCHAR(50) NOT NULL
+);
+
+INSERT INTO estados_pedidos(id, descripcion) VALUES
+	(0, "PREPARACION"),
+	(1, "LISTO");

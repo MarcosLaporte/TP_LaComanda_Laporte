@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . "\..\db\AccesoDatos.php");
-include_once(__DIR__ . "ProductoPedido.php");
+include_once(__DIR__ . "\ProductoPedido.php");
 include_once(__DIR__ . "\..\util\pdf\\fpdf.php");
 
 class Recibo

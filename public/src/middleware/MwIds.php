@@ -3,6 +3,29 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
 
+class MwIdUsuario
+{
+	public function __invoke(Request $request, RequestHandler $handler): Response
+	{
+		$response = new Response();
+		$params = $request->getParsedBody();
+
+		if (isset($params['idUsuario'])) {
+			$usuario = Usuario::TraerPorId($params['idUsuario']);
+			if (!empty($usuario)) {
+				$response = $handler->handle($request);
+			} else {
+				$response->getBody()->write(json_encode(array("msg" => "Revise el ID del usuario!")));
+			}
+		} else {
+			$response->getBody()->write(json_encode(array("msg" => "Ingrese el ID del usuario!")));
+		}
+
+
+		return $response;
+	}
+}
+
 class MwIdMesa
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response

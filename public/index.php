@@ -49,6 +49,7 @@ $app->post('/login', \UsuarioController::class . ':Login');
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
 	$group->post('[/]', \UsuarioController::class . ':Add')->add(new MwCantSocios())->add(new MwRolUsuario())->add(new MwUsuario());
 	$group->get('[/]', \UsuarioController::class . ':GetAll');
+	$group->put('/estado', \UsuarioController::class . ':Modify')->add(new MwIdUsuario())->add(new MwEsSocio());
 })->add(new MwEsSocio());
 
 $app->group('/productos', function (RouteCollectorProxy $group) {
