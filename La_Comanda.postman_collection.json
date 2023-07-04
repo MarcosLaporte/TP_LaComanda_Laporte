@@ -321,6 +321,42 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Modificar Estado",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "idUsuario",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "estado",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/public/usuarios/estado",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"public",
+								"usuarios",
+								"estado"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
